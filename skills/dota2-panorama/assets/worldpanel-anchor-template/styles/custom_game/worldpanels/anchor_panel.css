@@ -1,0 +1,62 @@
+.AnchorRoot {
+    width: 320px;
+    height: 28px;
+    flow-children: none;
+    horizontal-align: left;
+    vertical-align: top;
+    position: 0px 0px 0px;
+    overflow: noclip;
+}
+
+.AnchorFrame {
+    width: 320px;
+    height: 28px;
+    flow-children: none;
+    horizontal-align: left;
+    vertical-align: top;
+    position: 0px 0px 0px;
+    border: 2px solid #2a0e03;
+    border-radius: 6px;
+    background-color: #00000099;
+}
+
+.AnchorContent {
+    width: 316px;
+    height: 24px;
+    horizontal-align: left;
+    vertical-align: top;
+    position: 2px 2px 0px;
+    flow-children: none;
+}
+
+#AnchorText {
+    width: 100%;
+    horizontal-align: center;
+    vertical-align: center;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffd34a;
+    text-overflow: noclip;
+    text-shadow:
+        -1px 0px 0px #1f0b01,
+        1px 0px 0px #1f0b01,
+        0px -1px 0px #1f0b01,
+        0px 1px 0px #1f0b01;
+}
+
+.AnchorRoot.Elite .AnchorFrame {
+    width: 220px;
+    height: 20px;
+    border-width: 1px;
+}
+
+.AnchorRoot.Elite .AnchorContent {
+    width: 218px;
+    height: 18px;
+    position: 1px 1px 0px;
+}
+
+.AnchorRoot.Elite #AnchorText {
+    font-size: 14px;
+}

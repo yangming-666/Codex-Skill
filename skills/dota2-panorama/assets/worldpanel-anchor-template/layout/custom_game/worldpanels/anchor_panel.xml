@@ -1,0 +1,16 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/worldpanels/anchor_panel.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/worldpanels/anchor_panel.js" />
+    </scripts>
+
+    <Panel class="AnchorRoot" hittest="false">
+        <Panel id="AnchorFrame" class="AnchorFrame">
+            <Panel id="AnchorContent" class="AnchorContent">
+                <Label id="AnchorText" text="x1" />
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

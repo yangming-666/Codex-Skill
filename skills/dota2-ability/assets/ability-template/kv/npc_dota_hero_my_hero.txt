@@ -1,0 +1,24 @@
+"DOTAAbilities"
+{
+  "Version" "1"
+
+  "my_hero_my_ability"
+  {
+    "AbilityBehavior" "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
+    "AbilityUnitTargetTeam" "DOTA_UNIT_TARGET_TEAM_ENEMY"
+    "AbilityUnitTargetType" "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+    "AbilityCastRange" "600"
+    "AbilityCooldown" "12 11 10 9"
+    "AbilityManaCost" "90 100 110 120"
+
+    "AbilityValues"
+    {
+      "damage" "100 150 200 250"
+      "radius"
+      {
+        "value" "300"
+        "affected_by_aoe_increase" "1"
+      }
+    }
+  }
+}

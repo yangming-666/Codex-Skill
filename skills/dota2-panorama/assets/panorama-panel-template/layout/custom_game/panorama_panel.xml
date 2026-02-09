@@ -1,0 +1,24 @@
+<!-- Base Panorama panel template -->
+<root>
+  <styles>
+    <include src="s2r://panorama/styles/dotastyles.vcss_c" />
+    <include src="file://{resources}/styles/custom_game/panorama_panel.css" />
+  </styles>
+  <scripts>
+    <include src="file://{resources}/scripts/custom_game/panorama_panel.js" />
+  </scripts>
+
+  <Panel id="PanoramaPanelRoot" class="PanoramaPanelRoot" hittest="false">
+    <Panel id="Header" class="PanelHeader">
+      <Label id="Title" class="Title" text="#panorama_panel_title" />
+    </Panel>
+
+    <Panel id="Body" class="PanelBody" hittest="false">
+      <Label id="BodyText" class="BodyText" text="#panorama_panel_body" />
+    </Panel>
+
+    <Button id="ConfirmButton" class="ConfirmButton" onactivate="OnConfirmClicked()">
+      <Label text="#panorama_panel_confirm" />
+    </Button>
+  </Panel>
+</root>
