@@ -1,0 +1,54 @@
+.ReplicaHost {
+    width: 100%;
+    height: 100%;
+}
+
+.ReplicaCanvas {
+    width: 1920px;
+    height: 1080px;
+    horizontal-align: center;
+    vertical-align: center;
+}
+
+.ReplicaMainPanel {
+    margin-left: 260px;
+    margin-top: 40px;
+    width: 1400px;
+    height: 1000px;
+    background-color: #1b2430f4;
+    border: 2px solid #7d8ea4;
+    border-radius: 12px;
+}
+
+.ReplicaSection {
+    border: 1px solid #7d8ea4;
+    border-radius: 8px;
+}
+
+.ReplicaSummary {
+    margin-left: 320px;
+    margin-top: 70px;
+    width: 1280px;
+    height: 220px;
+}
+
+.ReplicaDamage {
+    margin-left: 320px;
+    margin-top: 310px;
+    width: 1280px;
+    height: 300px;
+}
+
+.ReplicaRewards {
+    margin-left: 320px;
+    margin-top: 630px;
+    width: 1280px;
+    height: 250px;
+}
+
+.ReplicaButtons {
+    margin-left: 320px;
+    margin-top: 900px;
+    width: 1280px;
+    height: 110px;
+}

@@ -1,0 +1,146 @@
+{
+  "_comment": "Standard mapping template for strict replica validation. Replace selectors/ids for your panel.",
+  "main-panel": {
+    "selector": ".EndMainPanel",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "summary-card": {
+    "selector": ".EndSummaryCard",
+    "parent_id": "main-panel",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "helper-summary-bottom": {
+    "selector": ".EndSummaryBottom",
+    "parent_id": "summary-card",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "result-title": {
+    "selector": ".EndResultTitle",
+    "parent_id": "summary-card",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "stage-name": {
+    "selector": ".EndStageName",
+    "parent_id": "summary-card",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "remain-hp": {
+    "selector": ".EndRemainHp",
+    "parent_id": "helper-summary-bottom",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "rating-container": {
+    "selector": ".EndRatingContainer",
+    "parent_id": "helper-summary-bottom",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "damage-panel": {
+    "selector": ".EndDamagePanel",
+    "parent_id": "main-panel",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "reward-panel": {
+    "selector": ".EndRewardPanel",
+    "parent_id": "main-panel",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "helper-reward-header": {
+    "selector": ".EndRewardHeader",
+    "parent_id": "reward-panel",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "reward-title": {
+    "selector": ".EndRewardTitle",
+    "parent_id": "helper-reward-header",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "unlock-banner": {
+    "selector": ".EndUnlockBanner",
+    "parent_id": "helper-reward-header",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "helper-reward-body": {
+    "selector": ".EndRewardBody",
+    "parent_id": "reward-panel",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "diamond-group": {
+    "selector": ".EndDiamondGroup",
+    "parent_id": "helper-reward-body",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "normal-group": {
+    "selector": ".EndNormalGroup",
+    "parent_id": "helper-reward-body",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "button-bar": {
+    "selector": ".EndButtonBar",
+    "parent_id": "main-panel",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "primary-button": {
+    "selector": ".EndPrimaryButton",
+    "parent_id": "button-bar",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  },
+  "secondary-button": {
+    "selector": ".EndSecondaryButton",
+    "parent_id": "button-bar",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  }
+}

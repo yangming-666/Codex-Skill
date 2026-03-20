@@ -1,6 +1,6 @@
 ---
 name: "figma-implement-design"
-description: "Translate Figma nodes into production-ready code with 1:1 visual fidelity using the Figma MCP workflow (design context, screenshots, assets, and project-convention translation). Use when the user provides Figma URLs or node IDs, or asks to implement designs/components that must match Figma in web, app, XML/CSS/JS, Panorama, or other non-Tailwind stacks. Requires a working Figma MCP server connection."
+description: "Translate Figma nodes into production-ready code with 1:1 visual fidelity using the Figma MCP workflow (design context, screenshots, assets, and project-convention translation). Trigger when the user provides Figma URLs or node IDs, or asks to implement designs/components that must match Figma specs in web, app, XML/CSS/JS, Panorama, or other non-Tailwind stacks. Requires a working Figma MCP server connection."
 ---
 
 

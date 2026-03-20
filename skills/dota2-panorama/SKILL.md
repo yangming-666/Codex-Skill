@@ -1,34 +1,249 @@
 ---
 name: dota2-panorama
-description: Dota 2 Panorama UI authoring and maintenance. Use when creating or modifying Panorama layout (VXML), styles (VCSS), or scripts (VJS), wiring CustomUIElement entries, or integrating GameEvents/CustomNetTables/localization in any Dota 2 custom game UI.
+description: Dota 2 Panorama UI authoring and maintenance. Use when creating or modifying Panorama layout (VXML), styles (VCSS), or scripts (VJS), wiring CustomUIElement entries, integrating GameEvents/CustomNetTables/localization, or reproducing UI from a design spec (draw.io/Figma/image). For design-replica requests, enforce strict coordinate contracts, hard validation gates, and no "close enough" delivery.
 ---
 
 # Dota2 Panorama
 
 ## Overview
 
-Create, edit, and debug Dota 2 Panorama UI with the correct syntax, file types, runtime APIs, and manifest wiring.
+Create, edit, and debug Dota 2 Panorama UI with correct syntax, runtime APIs, and manifest wiring.
 
 ## Core Workflow
 
-1) Identify the UI scope
-- Decide if this is a new panel, a change to an existing panel, or a new full-screen view.
-- Determine where it should load (Hud, HeroSelection, GameSetup, EndScreen).
+1) Identify scope
+- Decide new panel vs existing panel change.
+- Decide load type (Hud, HeroSelection, GameSetup, EndScreen).
 
 2) Update layout (VXML)
-- Add or edit the panel tree and classes.
-- Include required scripts and styles in the layout file.
+- Edit panel tree and classes.
+- Keep layout declarative; move behavior to scripts.
 
 3) Update styles (VCSS)
-- Add or modify class rules, leveraging variables and gradients where needed.
-- Avoid relying on unsupported CSS features; keep to Panorama-compatible syntax.
+- Implement geometry and visuals.
+- Avoid unsupported CSS features.
 
 4) Update scripts (VJS)
-- Bind events, wire GameEvents or CustomNetTables, and manipulate panels.
-- Keep UI logic client-side; server communication via custom game events only.
+- Wire events, net tables, and client-side rendering.
+- Use custom game events for server calls.
 
-5) Wire the manifest
-- Ensure the layout is registered in the UI manifest with the correct CustomUIElement type.
+5) Wire manifest
+- Ensure `custom_ui_manifest.xml` has the target CustomUIElement.
+
+## Strict Design-Replica Mode
+
+Trigger when user asks to "按设计图实现/对照 draw.io/像素级还原/严格一致".
+
+### Non-Negotiable Rules
+
+1) Freeze one coordinate system
+- If draw.io uses absolute px, implement absolute px for all design-critical blocks.
+- Do not mix proportional and ad-hoc margin tuning.
+
+2) Output a geometry contract before coding
+- Build `id -> x,y,width,height` from draw.io first.
+- Use `scripts/extract_drawio_contract.py` to generate contract JSON.
+- Do not start CSS until contract exists.
+- Build relation contract at the same time (center lines, group gaps, proportional widths).
+
+3) Use hybrid layout model (fixed outside, adaptive inside)
+- Outer shell (`main panel`, section containers, headers, button bar) must be fixed geometry.
+- Adaptive behavior is allowed only inside designated content slots.
+
+4) Respect prohibited patterns on critical chains
+- Do not use `fit-children` on design-critical blocks.
+- Do not use `fill-parent-flow` or `width: 100%` for design-critical geometry.
+- Do not solve one alignment problem with both flow positioning and manual offsets.
+- If a critical selector must use flow (for controlled text/button stacking), declare it explicitly in a flow-allowed list during validation.
+- Do not mix anchor alignment (`horizontal-align`/`vertical-align`) with manual offsets (`margin-left/top` or `left/top`) on the same selector unless explicitly allowlisted.
+- Treat as hard conflict: `horizontal-align:center/right` with x-offsets, `vertical-align:center/bottom` with y-offsets.
+- Do not use negative margins for design-critical positioning.
+
+5) Separate geometry and typography phases
+- Phase A: structure + geometry only.
+- Phase B: text centering and overflow handling (`text-overflow: shrink`).
+- Phase C: optional optical +/-1px corrections only.
+
+6) Handle HUD interference explicitly
+- For full-screen end-state replicas, verify whether foreign HUD panels are visible.
+- If visible and conflicting with design intent, add explicit hide/show rules for end-state.
+
+## Replica Pipeline (Required)
+
+Execute in this order for replica tasks:
+
+1) Extract contract from draw.io.
+2) Build relation rules (alignment, spacing, ratio) from draw.io.
+3) Create a draw.io page-3 "Panorama Mapping View":
+- Duplicate the design page on page 3.
+- Replace node text with Panorama class/selector names.
+- Keep all alignment lines, spacing labels, and ratio labels visible.
+- Page-3 annotation rules (required):
+  - Class text in container must use adaptive font sizing first.
+  - If class text cannot fit or is covered by child containers, switch to external callout + connector.
+  - External callouts can be placed around all sides (360-degree), not only one side.
+  - Connector lines must be straight (no polyline bends), non-overlapping, and use the same color as the callout box stroke/text.
+  - External callout boxes must be outside `Class Mapping Area (inside 1920x1080)`.
+  - `Alignment Relation Area` must be placed to the right of callout area (further right than class callouts).
+4) Generate a readable relation sheet file from contract + mapping + relations.
+5) Generate fixed shell skeleton from contract.
+6) Apply controlled adaptive behavior only inside content slots.
+7) Run static checker with geometry + relation checks.
+8) Dump runtime geometry and compare with contract.
+9) Perform final visual check against design screenshot.
+
+## Dynamic Content Contract (Required in Replica Tasks)
+
+Use this model unless user asks otherwise:
+
+- `Outer`: fixed by draw.io contract.
+- `Damage rows`: scroll container for overflow.
+- `Reward panel`: fixed two-group shell.
+- `Star rewards`: fixed slot count (1/2/3 star cards).
+- `Normal rewards`: controlled adaptive policy:
+  - 1 item: centered single card.
+  - 2 items: centered two-column.
+  - 3+ items: wrap + vertical scroll.
+
+## Acceptance Gate (Definition of Done)
+
+Do not claim completion until all checks pass:
+
+1) Geometry fidelity
+- Critical blocks are within ±2px of contract in x/y/w/h.
+- For child blocks inside a positioned parent, validate with parent-relative offsets using mapping `parent_selector`.
+- Mapping must include relation-critical child ids, not only container ids.
+- Mapping parent chain must match XML direct parent chain for mapped critical ids.
+
+2) Relation fidelity (required)
+- Center-line relations (for example title vs section center) must pass.
+- Gap relations (vertical rhythm and horizontal spacing) must pass.
+- Group-level ratio/width relations must pass.
+
+3) No clipping
+- Key labels are not clipped (rating text, button text, reward labels).
+- Mapped critical children remain inside mapped parent bounds unless explicitly allowlisted.
+
+4) Overflow behavior
+- Damage and reward content overflow via scroll (not truncation by logic).
+
+5) State stability
+- Win/lose, first-clear/non-first-clear, 1/2/N reward counts preserve shell geometry.
+
+6) Validation artifacts
+- Save contract JSON and checker report for the task.
+
+7) Runtime geometry and visual parity
+- Runtime panel geometry dump must satisfy contract/relations.
+- Final screenshot must not have obvious drift from the design.
+
+8) Page-3 annotation quality
+- No class-text clipping in mapped containers.
+- For external callouts, connector crossings are not allowed.
+- Class mapping area and relation area must be visually separated and non-overlapping.
+
+## Validation Scripts
+
+Use bundled scripts for replica tasks:
+Run commands from this skill root (`C:/Users/ym199/.codex/skills/dota2-panorama`) or call scripts via absolute path.
+
+1) Extract contract
+```bash
+python scripts/extract_drawio_contract.py --drawio <path/to/design.drawio> --out <contract.json>
+```
+
+2) Generate replica shell
+```bash
+python scripts/generate_panorama_replica.py \
+  --contract <contract.json> \
+  --xml-out <layout.xml> \
+  --css-out <style.css>
+```
+
+3) Check panorama layout
+```bash
+python scripts/check_panorama_layout.py \
+  --contract <contract.json> \
+  --xml <layout.xml> \
+  --css <style.css> \
+  --map <mapping.json> \
+  --relation-rules <relations.json> \
+  --required-map-ids "main-panel,summary-card,result-title,stage-name,remain-hp,rating-container,reward-panel,reward-title,unlock-banner,button-bar,primary-button,secondary-button,diamond-group,normal-group" \
+  --required-selectors ".EndResultTitle,.EndStageName,.EndRemainHp,.EndRatingContainer,.EndDamageRow,.EndRewardTitle,.EndUnlockBanner" \
+  --critical-selectors ".EndMainPanel,.EndSummaryCard,.EndDamagePanel,.EndRewardPanel,.EndButtonBar" \
+  --flow-allowed-selectors ".EndDamagePanel" \
+  --scroll-selectors ".EndDamageRows.NeedScroll,.EndRewardBody.NeedScroll" \
+  --enforce-direct-parent-mapped \
+  --enforce-inside-parent-mapped
+```
+
+`mapping.json` supports parent-relative checks:
+```json
+{
+  "summary-card": {
+    "selector": ".EndSummaryCard",
+    "parent_id": "main-panel",
+    "x_prop": "margin-left",
+    "y_prop": "margin-top",
+    "w_prop": "width",
+    "h_prop": "height"
+  }
+}
+```
+
+Use `parent_id` as the preferred parent chain mechanism for nested layouts. Use `parent_selector` only when parent is not part of mapping.
+For design-critical mapped nodes, `parent_id` should point to the direct XML parent mapping.
+
+`relations.json` example:
+```json
+{
+  "rules": [
+    {"type": "center_x_equal", "a": "result-title", "b": "stage-name", "tol": 2},
+    {"type": "center_x_equal", "a": "reward-title", "b": "reward-panel", "tol": 2},
+    {"type": "center_x_equal", "a": "primary-button", "b": "button-bar", "tol": 2},
+    {"type": "gap_x", "a": "diamond-group", "b": "normal-group", "value": 20, "tol": 2}
+  ]
+}
+```
+
+4) Generate relation sheet (human-readable handoff artifact)
+```bash
+python scripts/generate_relation_sheet.py \
+  --contract <contract.json> \
+  --mapping <mapping.json> \
+  --relations <relations.json> \
+  --out <replica_relations.md>
+```
+
+This file is required for replica acceptance and must clearly show:
+- draw.io id -> Panorama selector mapping
+- alignment/gap/ratio constraints
+- page-3 mapping-view usage notes
+
+5) Dump runtime geometry in Panorama JS
+```js
+GameUI.ReplicaDumpLayout("#GameFlowRoot", [
+  ".EndMainPanel",
+  ".EndSummaryCard",
+  ".EndDamagePanel",
+  ".EndRewardPanel",
+  ".EndButtonBar"
+], "");
+```
+
+6) Check runtime geometry dump
+```bash
+python scripts/check_runtime_layout.py \
+  --contract <contract.json> \
+  --dump <runtime_dump.txt> \
+  --map <mapping.json> \
+  --relation-rules <relations.json> \
+  --required-selectors ".EndMainPanel,.EndSummaryCard,.EndResultTitle,.EndStageName,.EndRemainHp,.EndRatingContainer,.EndDamagePanel,.EndRewardPanel,.EndRewardTitle,.EndUnlockBanner,.EndDiamondGroup,.EndNormalGroup,.EndButtonBar,.EndPrimaryButton,.EndSecondaryButton" \
+  --require-visible-selectors ".EndResultTitle,.EndStageName,.EndRemainHp,.EndRatingContainer,.EndRewardTitle,.EndUnlockBanner,.EndPrimaryButton,.EndSecondaryButton" \
+  --enforce-inside-parent-mapped
+```
+
+If check fails, revise skill workflow/rules before retrying implementation.
 
 ## Guidelines
 
@@ -41,32 +256,25 @@ Create, edit, and debug Dota 2 Panorama UI with the correct syntax, file types, 
 - When normalizing image paths in JS, handle `.vtex_c` → `.vtex` and `.vsvg_c` → `.vsvg`, and avoid appending `.vtex` to SVG paths.
 - To preserve image aspect ratio safely across Panorama builds, prefer a `Panel` with `background-image` + `background-size: contain` + `background-repeat: no-repeat` + `background-position: center`; avoid relying on `scaling` when parser warnings appear.
 - Keep layout files declarative; move behavior to scripts.
+- For text blocks that need vertical centering or stable anchor geometry, separate box geometry from text rendering:
+  - If a `Label` is currently responsible for both container geometry and text rendering, wrap it in a `Panel`.
+  - Let the wrapper `Panel` own box concerns: `width/height`, margins, anchor alignment, background/border visuals, clipping, and state/visibility classes.
+  - Let the `Label` own text concerns only: text content, `width: 100%` when needed for wrapping/centering, `height: fit-children`, `vertical-align`, `text-align`, `font-*`, `color`, `text-overflow`, and small optical corrections.
+  - When the text should be centered inside a fixed wrapper, default the `Label` to:
+    ```css
+    width: 100%;
+    height: fit-children;
+    vertical-align: center;
+    text-align: center;
+    ```
+  - Do not use `horizontal-align: center` alone as a text-centering strategy; it centers the `Label` panel, not necessarily the glyphs.
+  - Only add `horizontal-align: center` to a `Label` when the `Label` itself is intentionally narrower than its parent and must be positioned as a panel.
+  - Prefer this wrapper + label pattern over `height: 100%` or `line-height` hacks. Use `line-height` or tiny offsets only as final optical correction after the wrapper/label split is correct.
+  - Apply the same rule to dynamically created Panorama JS content: build `Panel(wrapper) + Label`, not one heavily styled `Label`.
+  - If state classes or visibility were previously toggled on the `Label`, move or mirror that logic to the wrapper so behavior does not regress.
 - Use `GameEvents` for server messages and `CustomNetTables` for synced state.
 - Use localization keys (`#token_name`) for all player-facing text.
 - Avoid global pollution; attach shared helpers to `GameUI` only when needed.
-
-## Text Centering
-
-For the simplest case where text must be centered both horizontally and vertically inside a fixed-size container, use a fixed-height parent and let the label fill the width while using `vertical-align: center`.
-
-```css
-.TitleWrap {
-    width: 360px;
-    height: 80px;
-}
-
-.TitleLabel {
-    width: 100%;
-    height: fit-children;
-    text-align: center;
-    vertical-align: center;
-}
-```
-
-Notes:
-- Horizontal centering comes from `width: 100%` + `text-align: center`.
-- Vertical centering comes from the parent having an explicit `height` and the label using `height: fit-children` + `vertical-align: center`.
-- If the parent height is not fixed, vertical centering will often be unstable or ineffective.
 
 ## WorldPanel Alignment Rules (Flow-Safe)
 
@@ -81,6 +289,7 @@ Use these rules whenever a worldpanel is anchored to entities and the visible co
 - Any panel participating in anchor math must use explicit `width` and `height`.
 - Do not use `fit-children` on the final aligned container.
 - `flow-children` is allowed only inside non-anchor subtrees.
+- For centered text inside an anchored panel, use a fixed-size wrapper panel as the anchor owner and keep the `Label` as a child responsible only for text layout.
 
 3) Shared size resolver for worldpanel math
 - Use one resolver in worldpanel positioning: `fixed > actual > desired`.
@@ -91,6 +300,7 @@ Use these rules whenever a worldpanel is anchored to entities and the visible co
 - Keep labels in child containers that do not define anchor size.
 - Treat text stroke, noclip, language length, and digit count changes as layout-risk inputs.
 - Never let text desired size become the source of worldpanel anchor width.
+- Do not put anchor-critical positioning, backgrounds, or state classes on the text `Label` when a wrapper panel can own them more stably.
 
 5) Variant consistency
 - Boss/Elite must share one alignment logic path and differ only by fixed size constants.
@@ -109,10 +319,14 @@ Use these rules whenever a worldpanel is anchored to entities and the visible co
 
 ## References
 
-- Panorama framework details and patterns: `references/panorama-framework.md`
-- Panorama JavaScript API2 overview: `references/panorama-api2.md`
+- Panorama framework: `references/panorama-framework.md`
+- Panorama API2: `references/panorama-api2.md`
+- Replica alignment rules: `references/replica-alignment-rules.md`
+- Standard mapping template: `references/mapping-template.json`
+- Runtime dump collection template: `references/runtime-dump-template.md`
 
 ## Assets
 
-- Base panel template (layout/script/style): `assets/panorama-panel-template/`
-- Worldpanel anchor-safe template (layout/style/script/server snippet): `assets/worldpanel-anchor-template/`
+- Base panel template: `assets/panorama-panel-template/`
+- Worldpanel anchor template: `assets/worldpanel-anchor-template/`
+- Replica shell template: `assets/replica-shell-template/`

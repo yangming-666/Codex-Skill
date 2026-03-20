@@ -1,0 +1,18 @@
+<root>
+    <styles>
+        <include src="s2r://panorama/styles/dotastyles.vcss_c" />
+        <include src="file://{resources}/styles/custom_game/replica_shell.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/replica_shell.js" />
+    </scripts>
+    <Panel class="ReplicaHost">
+        <Panel id="ReplicaCanvas" class="ReplicaCanvas">
+            <Panel id="ReplicaMainPanel" class="ReplicaMainPanel" />
+            <Panel id="ReplicaSummary" class="ReplicaSection ReplicaSummary" />
+            <Panel id="ReplicaDamage" class="ReplicaSection ReplicaDamage" />
+            <Panel id="ReplicaRewards" class="ReplicaSection ReplicaRewards" />
+            <Panel id="ReplicaButtons" class="ReplicaSection ReplicaButtons" />
+        </Panel>
+    </Panel>
+</root>
