@@ -45,6 +45,29 @@ Create, edit, and debug Dota 2 Panorama UI with the correct syntax, file types, 
 - Use localization keys (`#token_name`) for all player-facing text.
 - Avoid global pollution; attach shared helpers to `GameUI` only when needed.
 
+## Text Centering
+
+For the simplest case where text must be centered both horizontally and vertically inside a fixed-size container, use a fixed-height parent and let the label fill the width while using `vertical-align: center`.
+
+```css
+.TitleWrap {
+    width: 360px;
+    height: 80px;
+}
+
+.TitleLabel {
+    width: 100%;
+    height: fit-children;
+    text-align: center;
+    vertical-align: center;
+}
+```
+
+Notes:
+- Horizontal centering comes from `width: 100%` + `text-align: center`.
+- Vertical centering comes from the parent having an explicit `height` and the label using `height: fit-children` + `vertical-align: center`.
+- If the parent height is not fixed, vertical centering will often be unstable or ineffective.
+
 ## WorldPanel Alignment Rules (Flow-Safe)
 
 Use these rules whenever a worldpanel is anchored to entities and the visible content uses flow/text.
