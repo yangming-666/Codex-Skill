@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dota 2 Sound Lookup"
+  short_description: "Resolve sound events and VPK resources"
+  default_prompt: "Use $dota2-sound-lookup to find the Dota 2 sound event and resource path for a vanilla KV or code reference."

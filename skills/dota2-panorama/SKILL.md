@@ -9,6 +9,16 @@ description: Dota 2 Panorama UI authoring and maintenance. Use when creating or 
 
 Create, edit, and debug Dota 2 Panorama UI with correct syntax, runtime APIs, and manifest wiring.
 
+## Repo Path Rules
+
+- In this repo, Panorama source lives under `content/dzsj/panorama/...`.
+- Compiled/build artifacts live under `game/dzsj/panorama/...` and usually end with `_c` (`.vjs_c`, `.vxml_c`, `.vcss_c`).
+- When a compiled file is present, always search for the matching source file in `content/dzsj/panorama/...` before editing anything.
+- Use the same relative subpath and replace the compiled extension with the source extension:
+  - `game/dzsj/panorama/scripts/custom_game/camera.vjs_c` -> `content/dzsj/panorama/scripts/custom_game/camera.js`
+  - `game/dzsj/panorama/layout/custom_game/camera.vxml_c` -> `content/dzsj/panorama/layout/custom_game/camera.xml`
+- If both source and compiled files exist, edit the source only and leave compiled artifacts untouched.
+
 ## Core Workflow
 
 1) Identify scope
@@ -29,6 +39,47 @@ Create, edit, and debug Dota 2 Panorama UI with correct syntax, runtime APIs, an
 
 5) Wire manifest
 - Ensure `custom_ui_manifest.xml` has the target CustomUIElement.
+
+6) Run syntax guard
+- For any new or modified Panorama file, run `python scripts/check_panorama_syntax.py --paths <changed files...>` before claiming completion.
+- If the task adds a new `layout/custom_game/worldpanels/*.xml`, run the syntax guard on that file even if no other checks are requested.
+
+## Panorama Syntax Guardrails
+
+- Treat Panorama XML parser constraints as hard rules, not style preferences.
+- The first actual root panel in a layout file must not include an `id` attribute. Use `class` on the root panel and put `id` only on descendants.
+- For new layout files, prefer copying the nearest existing working template in the repo instead of hand-writing the outer structure from memory.
+- For new worldpanels, compare against an existing worldpanel in the repo before editing behavior or styling.
+- For worldpanels with placement precision requirements, default to the `boss_health` pattern, not the `shop1_dummy_level` pattern:
+  - explicit fixed-size root
+  - explicit fixed-size inner frame
+  - server-provided `worldpanel_fixed_width` / `worldpanel_fixed_height`
+  - `horizontal-align: left`, `vertical-align: top`, `position: 0px 0px 0px` on the anchor root
+- Do not rely on memory for Panorama-only syntax. If the structure is fragile, verify it against an existing local file first.
+- If a JS file needs the layout root, use `$.GetContextPanel()` rather than assuming the root has an `id`.
+
+## New Layout Checklist
+
+Run this checklist for any newly created `.xml` Panorama layout, especially under `layout/custom_game/worldpanels/`:
+
+1) Structure
+- The file has a `<root>` wrapper.
+- The first actual panel node under `<root>` does not have an `id`.
+- `styles` / `scripts` includes appear before the actual panel tree.
+
+2) Reference integrity
+- Included CSS and JS files exist on disk.
+- Referenced panorama resource paths use the correct `file://{resources}` or `s2r://` scheme.
+- File naming is consistent across `layout/`, `scripts/`, and `styles/` when the feature is intended to be a matched set.
+
+3) Template parity
+- If the file is a worldpanel, compare its root structure with one existing compiled worldpanel in the repo.
+- If the file is a full HUD panel or popup, compare against a same-category existing layout before finishing.
+- If the worldpanel must appear exactly over an in-world target, require fixed-size parity with `boss_health` unless the repo already contains a different verified fixed-size template for the same category.
+
+4) Validation
+- Run `python scripts/check_panorama_syntax.py --paths <changed files...>`.
+- If local compile is available for the task, compile after syntax guard and treat compile failure as blocking.
 
 ## Strict Design-Replica Mode
 
@@ -147,6 +198,17 @@ Do not claim completion until all checks pass:
 Use bundled scripts for replica tasks:
 Run commands from this skill root (`C:/Users/ym199/.codex/skills/dota2-panorama`) or call scripts via absolute path.
 
+General syntax validation for any Panorama task:
+```bash
+python scripts/check_panorama_syntax.py --paths <changed panorama files...>
+```
+
+This check is required for:
+- new `.xml` layout files
+- new worldpanels
+- refactors that move or rename included CSS/JS files
+- any task that changes Panorama resource paths
+
 1) Extract contract
 ```bash
 python scripts/extract_drawio_contract.py --drawio <path/to/design.drawio> --out <contract.json>
@@ -254,7 +316,25 @@ If check fails, revise skill workflow/rules before retrying implementation.
 - For image sources from KV paths, use `s2r://(path in kv).vtex` with no `_c`, e.g. `src="s2r://panorama/images/heroes/selection/npc_dota_hero_invoker_persona1_png.vtex"`.
 - For item icons specifically, use `s2r://panorama/images/items/<item_name>_png.vtex`.
 - When normalizing image paths in JS, handle `.vtex_c` → `.vtex` and `.vsvg_c` → `.vsvg`, and avoid appending `.vtex` to SVG paths.
-- To preserve image aspect ratio safely across Panorama builds, prefer a `Panel` with `background-image` + `background-size: contain` + `background-repeat: no-repeat` + `background-position: center`; avoid relying on `scaling` when parser warnings appear.
+- Image aspect ratio is a hard-compatibility rule in Panorama:
+  - Default safe pattern: use a wrapper `Panel` with fixed geometry, then render the image via `background-image`.
+  - Preferred CSS on that image panel:
+    ```css
+    .SomeImagePanel {
+        width: 100%;
+        height: 100%;
+        background-image: url("file://{images}/...");
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    ```
+  - If the image path is dynamic in JS, set `panel.style.backgroundImage`, not a child `Image` with unsupported CSS hacks.
+  - Do not use `preserve-aspect-fit`; Panorama parser does not support it.
+  - Do not invent CSS properties based on web habits. If a property is not known to Panorama, assume it is unsupported until verified.
+  - Do not claim an image will keep aspect ratio unless the implementation uses `background-size: contain` or another Panorama-verified approach.
+  - Treat plain `Image` panels with both width and height forced as stretch-risk by default. Only use them when distortion is acceptable or behavior is explicitly verified in this repo.
+  - When migrating an existing stretched image, prefer replacing the visual node with `Panel + background-image` rather than stacking more properties onto `Image`.
 - Keep layout files declarative; move behavior to scripts.
 - For text blocks that need vertical centering or stable anchor geometry, separate box geometry from text rendering:
   - If a `Label` is currently responsible for both container geometry and text rendering, wrap it in a `Panel`.

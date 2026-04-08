@@ -46,7 +46,7 @@ This is a curated API2 index. Verify details against the wiki when precision mat
 - `Game.GetGameTime`, `Game.GetGameFrameTime`
 - `Game.GetState`
 - `Game.IsPaused`, `Game.IsGamePaused`
-- `Game.EmitSound`
+- `Game.EmitSound` / `Game.StopSound` - resolve the event/resource name with `$dota2-sound-lookup` before wiring UI playback or stop logic.
 
 ### `Players`
 
