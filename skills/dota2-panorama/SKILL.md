@@ -1,6 +1,6 @@
 ---
 name: dota2-panorama
-description: Dota 2 Panorama UI authoring and maintenance. Use when creating or modifying Panorama layout (VXML), styles (VCSS), or scripts (VJS), wiring CustomUIElement entries, integrating GameEvents/CustomNetTables/localization, or reproducing UI from a design spec (draw.io/Figma/image). For design-replica requests, enforce strict coordinate contracts, hard validation gates, and no "close enough" delivery.
+description: Dota 2 Panorama source UI authoring and maintenance. Use only when modifying Panorama source files under `content/dzsj/panorama/...` (VXML, VCSS, VJS), wiring CustomUIElement entries, integrating GameEvents/CustomNetTables/localization, or reproducing UI from a design spec (draw.io/Figma/image). Never inspect or infer behavior from compiled/build artifacts under `game/dzsj/panorama/...` or any file ending in `_c`; if the matching source file is missing, stop and ask for the source path or a rebuild from source. For design-replica requests, enforce strict coordinate contracts, hard validation gates, and no "close enough" delivery.
 ---
 
 # Dota2 Panorama
@@ -11,13 +11,16 @@ Create, edit, and debug Dota 2 Panorama UI with correct syntax, runtime APIs, an
 
 ## Repo Path Rules
 
-- In this repo, Panorama source lives under `content/dzsj/panorama/...`.
-- Compiled/build artifacts live under `game/dzsj/panorama/...` and usually end with `_c` (`.vjs_c`, `.vxml_c`, `.vcss_c`).
-- When a compiled file is present, always search for the matching source file in `content/dzsj/panorama/...` before editing anything.
+- Hard gate:
+  - Panorama work must start by locating the matching source file under `content/dzsj/panorama/...`.
+  - Do not read, inspect, open, decompile, or infer behavior from `game/dzsj/panorama/...` artifacts at any point.
+  - If the matching source file cannot be found, stop immediately and report the missing source path.
+- Compiled/build artifacts under `game/dzsj/panorama/...` are off-limits and usually end with `_c` (`.vjs_c`, `.vxml_c`, `.vcss_c`).
 - Use the same relative subpath and replace the compiled extension with the source extension:
   - `game/dzsj/panorama/scripts/custom_game/camera.vjs_c` -> `content/dzsj/panorama/scripts/custom_game/camera.js`
   - `game/dzsj/panorama/layout/custom_game/camera.vxml_c` -> `content/dzsj/panorama/layout/custom_game/camera.xml`
-- If both source and compiled files exist, edit the source only and leave compiled artifacts untouched.
+- If source and compiled files both exist, edit only the source.
+- If only the compiled artifact exists, do not infer behavior from it and do not search further in `game/...`; report the source gap and ask for the missing source path or a rebuild step.
 
 ## Core Workflow
 
@@ -43,6 +46,94 @@ Create, edit, and debug Dota 2 Panorama UI with correct syntax, runtime APIs, an
 6) Run syntax guard
 - For any new or modified Panorama file, run `python scripts/check_panorama_syntax.py --paths <changed files...>` before claiming completion.
 - If the task adds a new `layout/custom_game/worldpanels/*.xml`, run the syntax guard on that file even if no other checks are requested.
+
+## Round Corner Contract
+
+- Give each rounded card exactly one visual owner.
+- Put `border-radius`, `overflow: clip`, background fill, border, and shadow on that same owner when the rounded surface is a single card shell.
+- Do not split one rounded surface across parent and child panels.
+- Do not use `border-radius: inherit`.
+- Do not let both `Frame` and `FrameFill` shape the same outer edge.
+- If an inner layer needs its own rounding, make it clearly inset and smaller than the outer radius.
+- If a rounded card shows a seam, collapse the fill and the radius onto one panel before any pixel tuning.
+
+## Visual Debugging Discipline
+
+- Never infer a Panorama visual result from a single class name or from appearance alone.
+- Always trace the full render chain before stating a conclusion:
+  - `VJS` class mutation
+  - matching `VCSS` selectors
+  - parent and ancestor classes
+  - overlapping style rules on the same property
+  - runtime data that triggered the class/state
+- For any visual issue, identify every class and selector that can affect the same layer:
+  - container / shell
+  - background / fill
+  - overlay / mask
+  - border / shadow
+  - text
+  - state classes such as `Locked`, `Selected`, `Disabled`, `Hidden`
+- For rounded cards, explicitly verify that only one selector owns the rounded boundary and clipping surface.
+- Treat the final render as a composition of layers, not a single style rule.
+- If the chain is incomplete, stop and say what is still unknown instead of guessing.
+- When debugging, isolate the problem one layer at a time by removing or disabling a single class or selector, then re-checking the result.
+- In review or explanation, cite the actual file paths and the actual properties involved; do not replace code evidence with aesthetic judgment.
+
+## Reusable Layout Templates
+
+Use these templates whenever the task is about building a stable Panorama layout, especially for menu pages, shop pages, task pages, or detail panels.
+
+### 1) Horizontal Template
+- Use when the content should flow left to right.
+- Outer container:
+  - `flow-children: right`
+  - keep width and height explicit
+- Inner content:
+  - fixed-width side panels on the left and right
+  - center panel uses the remaining width
+- Typical shape:
+  - `Root` -> `Shell` -> `LeftColumn` / `CenterColumn` / `RightColumn`
+
+### 2) Vertical Template
+- Use when the content should flow top to bottom.
+- Outer container:
+  - `flow-children: down`
+  - keep width and height explicit
+- Inner content:
+  - top spacer
+  - content stack
+  - bottom spacer
+- Use this when you need a vertically centered group of buttons or cards.
+
+### 3) Horizontal-Vertical Hybrid Template
+- Use when the page is split horizontally, but one side contains a vertical stack.
+- Outer shell:
+  - `flow-children: right`
+  - fixed geometry for the page body
+- Left side:
+  - vertical stack container
+  - use top/bottom spacer panels when you need the stack centered
+- Right side:
+  - vertical detail area or scroll list
+  - use its own inner spacer panels if the content must sit centered inside the slot
+- Preferred pattern:
+  - `Root` -> `Shell` -> `NavColumn` + `ContentColumn`
+  - `NavColumn` -> `TopSpacer` + `ButtonList` + `BottomSpacer`
+  - `ContentColumn` -> `TopSpacer` + `Detail/List` + `BottomSpacer`
+
+### Template Rules
+- Keep the geometry in CSS, not in ad-hoc JS offsets.
+- For rounded shells, prefer one panel that owns both the fill and the clipped radius; do not build the edge from stacked same-radius panels.
+- Use spacer panels with `height: fill-parent-flow(1)` for vertical centering.
+- Use `flow-children: right` for horizontal shells and `flow-children: down` for vertical stacks.
+- For stable page padding, prefer a dedicated inner frame panel with `margin: 40px` or a dedicated content slot. Do not rely on `padding` alone on a high-level container when the layout chain is already flow-driven or when the page body is unstable.
+- If a page needs a fixed four-sided inset, use `ContainerBase -> Frame -> Root`:
+  - `ContainerBase`: owns the outer page slot and flow direction.
+  - `Frame`: owns the fixed inset via margin.
+  - `Root`: owns the actual page content.
+- For button groups, make the group container own the centering and make individual buttons own their height and local gap.
+- For detail panels, keep the detail slot separate from the navigation slot even when both are in the same page.
+- When a layout combines both directions, treat each sub-container as its own template block instead of forcing one global flow rule.
 
 ## Panorama Syntax Guardrails
 
@@ -340,6 +431,10 @@ If check fails, revise skill workflow/rules before retrying implementation.
   - If a `Label` is currently responsible for both container geometry and text rendering, wrap it in a `Panel`.
   - Let the wrapper `Panel` own box concerns: `width/height`, margins, anchor alignment, background/border visuals, clipping, and state/visibility classes.
   - Let the `Label` own text concerns only: text content, `width: 100%` when needed for wrapping/centering, `height: fit-children`, `vertical-align`, `text-align`, `font-*`, `color`, `text-overflow`, and small optical corrections.
+  - Treat "vertical centering" as a two-step contract:
+    1. the wrapper must have fixed, stable height;
+    2. the `Label` must fill the wrapper width and center its glyphs inside that box.
+  - If either box height or label width is unstable, do not claim the text is vertically centered yet.
   - When the text should be centered inside a fixed wrapper, default the `Label` to:
     ```css
     width: 100%;
@@ -348,10 +443,13 @@ If check fails, revise skill workflow/rules before retrying implementation.
     text-align: center;
     ```
   - Do not use `horizontal-align: center` alone as a text-centering strategy; it centers the `Label` panel, not necessarily the glyphs.
+  - Do not replace wrapper geometry with `fit-children` on the title `Label`; that makes the label box shrink to content and breaks stable centering.
+  - Do not use `margin-top` / `margin-bottom` to fake vertical centering unless the wrapper contract is already correct and the offset is explicitly approved as a final optical correction.
   - Only add `horizontal-align: center` to a `Label` when the `Label` itself is intentionally narrower than its parent and must be positioned as a panel.
   - Prefer this wrapper + label pattern over `height: 100%` or `line-height` hacks. Use `line-height` or tiny offsets only as final optical correction after the wrapper/label split is correct.
   - Apply the same rule to dynamically created Panorama JS content: build `Panel(wrapper) + Label`, not one heavily styled `Label`.
   - If state classes or visibility were previously toggled on the `Label`, move or mirror that logic to the wrapper so behavior does not regress.
+  - For review/debug, explain centering failures by naming the broken layer: wrapper height, label width, label height, or glyph metrics. Do not call it "just a margin issue" unless the wrapper contract is already proven correct.
 - Use `GameEvents` for server messages and `CustomNetTables` for synced state.
 - Use localization keys (`#token_name`) for all player-facing text.
 - Avoid global pollution; attach shared helpers to `GameUI` only when needed.

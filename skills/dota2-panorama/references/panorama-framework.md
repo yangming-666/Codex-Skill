@@ -122,3 +122,5 @@ Add tokens to your localization files in `resource/`.
 - Using unsupported CSS features or web-only APIs.
 - Mixing heavy logic into layout instead of scripts.
 - Failing to register the layout in the manifest.
+- Assuming a visual outcome comes from one class only. In Panorama, final rendering is usually a chain of `VJS` state changes, parent/child classes, and multiple CSS selectors acting on the same layer.
+- Before explaining a visual bug, trace the actual class chain and the selectors that touch the same property; if the chain is incomplete, do not guess.

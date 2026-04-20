@@ -1,0 +1,1 @@
+prefix_rule(pattern=["C:\\Program Files\\PowerShell\\7\\pwsh.exe", "-Command", "& C:\\Users\\ym199\\.codex\\scripts\\start-lark-mcp.ps1"], decision="allow")
