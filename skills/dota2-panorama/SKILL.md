@@ -447,9 +447,26 @@ If check fails, revise skill workflow/rules before retrying implementation.
   - Do not use `margin-top` / `margin-bottom` to fake vertical centering unless the wrapper contract is already correct and the offset is explicitly approved as a final optical correction.
   - Only add `horizontal-align: center` to a `Label` when the `Label` itself is intentionally narrower than its parent and must be positioned as a panel.
   - Prefer this wrapper + label pattern over `height: 100%` or `line-height` hacks. Use `line-height` or tiny offsets only as final optical correction after the wrapper/label split is correct.
-  - Apply the same rule to dynamically created Panorama JS content: build `Panel(wrapper) + Label`, not one heavily styled `Label`.
-  - If state classes or visibility were previously toggled on the `Label`, move or mirror that logic to the wrapper so behavior does not regress.
-  - For review/debug, explain centering failures by naming the broken layer: wrapper height, label width, label height, or glyph metrics. Do not call it "just a margin issue" unless the wrapper contract is already proven correct.
+- Apply the same rule to dynamically created Panorama JS content: build `Panel(wrapper) + Label`, not one heavily styled `Label`.
+- If state classes or visibility were previously toggled on the `Label`, move or mirror that logic to the wrapper so behavior does not regress.
+- For review/debug, explain centering failures by naming the broken layer: wrapper height, label width, label height, or glyph metrics. Do not call it "just a margin issue" unless the wrapper contract is already proven correct.
+- Treat scroll containers as a hard contract:
+  - Put `overflow: ... scroll` on the panel that directly owns the overflowing content. Do not split "viewport owns scroll" and "child owns width/content" unless an existing working local pattern proves it is required.
+  - Use one scroll owner per axis. If an outer wrapper is needed for clipping or decoration, make it `overflow: clip`/`noclip` and keep the actual scrolling on the inner content owner.
+  - Hiding `VerticalScrollBar` or `HorizontalScrollBar` is presentation-only. Do not infer that hidden scrollbars disable wheel, drag, or native scrolling.
+  - Treat `scrolloffset_x` and `scrolloffset_y` as observation signals, not writable control APIs. Use them to read scroll state; do not design fixes around assigning to them.
+  - Before implementing custom drag/scroll logic, first compare against an existing working scroll panel in this repo and verify:
+    - the scroll owner is the panel with `overflow: ... scroll`
+    - the content actually exceeds the owner in the scroll axis
+    - no intermediate wrapper changed the scroll owner
+  - For horizontal lists/carousels, prefer repo-proven patterns:
+    - native horizontal scroll: one panel owns both `overflow: scroll squish` and the direct horizontally flowing content
+    - custom carousel: outer container clips, inner strip uses `transform: translateX(...)`, and navigation/drag logic owns the offset explicitly
+  - If native scrolling fails, diagnose in this order before inventing new mechanics:
+    1. confirm which panel is the real scroll owner
+    2. confirm content width/height exceeds the owner in the intended axis
+    3. compare the structure with a working local example
+    4. only then consider custom scrolling behavior
 - Use `GameEvents` for server messages and `CustomNetTables` for synced state.
 - Use localization keys (`#token_name`) for all player-facing text.
 - Avoid global pollution; attach shared helpers to `GameUI` only when needed.

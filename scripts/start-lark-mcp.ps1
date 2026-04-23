@@ -13,6 +13,34 @@ $stderrPath = Join-Path $logsDir "lark-mcp.stderr.log"
 $packageRoot = "C:\Users\ym199\.codex\vendor\lark-mcp"
 $cliPath = Join-Path $packageRoot "node_modules\@larksuiteoapi\lark-mcp\dist\cli.js"
 
+function Invoke-LarkLocalRequest {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Uri,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Method,
+
+        [int]$TimeoutSec = 3
+    )
+
+    $handler = [System.Net.Http.HttpClientHandler]::new()
+    $handler.UseProxy = $false
+    $client = [System.Net.Http.HttpClient]::new($handler)
+    $client.Timeout = [TimeSpan]::FromSeconds($TimeoutSec)
+
+    try {
+        $request = [System.Net.Http.HttpRequestMessage]::new(
+            [System.Net.Http.HttpMethod]::new($Method),
+            $Uri
+        )
+        return $client.SendAsync($request).GetAwaiter().GetResult()
+    } finally {
+        $client.Dispose()
+        $handler.Dispose()
+    }
+}
+
 function Get-StoredLocalAccessToken {
     param(
         [string]$AppId
@@ -125,11 +153,14 @@ function Test-LarkEndpoint {
     )
 
     try {
-        $response = Invoke-WebRequest -Uri ("http://{0}:{1}/mcp" -f $BindHost, $Port) -Method Get -UseBasicParsing -TimeoutSec 3
-        return $response.StatusCode -eq 405
+        $response = Invoke-LarkLocalRequest -Uri ("http://{0}:{1}/mcp" -f $BindHost, $Port) -Method "GET" -TimeoutSec 3
+        return [int]$response.StatusCode -eq 405
     } catch {
-        $statusCode = $_.Exception.Response.StatusCode.value__
-        return $statusCode -eq 405
+        $response = $_.Exception.Response
+        if ($response -and $response.StatusCode) {
+            return [int]$response.StatusCode -eq 405
+        }
+        return $false
     }
 }
 

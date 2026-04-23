@@ -4,6 +4,34 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $configPath = Join-Path $scriptDir "lark-mcp.config.json"
 $pidPath = Join-Path $scriptDir "lark-mcp.pid"
 
+function Invoke-LarkLocalRequest {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Uri,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Method,
+
+        [int]$TimeoutSec = 3
+    )
+
+    $handler = [System.Net.Http.HttpClientHandler]::new()
+    $handler.UseProxy = $false
+    $client = [System.Net.Http.HttpClient]::new($handler)
+    $client.Timeout = [TimeSpan]::FromSeconds($TimeoutSec)
+
+    try {
+        $request = [System.Net.Http.HttpRequestMessage]::new(
+            [System.Net.Http.HttpMethod]::new($Method),
+            $Uri
+        )
+        return $client.SendAsync($request).GetAwaiter().GetResult()
+    } finally {
+        $client.Dispose()
+        $handler.Dispose()
+    }
+}
+
 function Get-LarkProcesses {
     $procs = Get-CimInstance Win32_Process |
         Where-Object {
@@ -51,11 +79,13 @@ if ($portOwner -and $portOwner.OwningProcess) {
 
 $alive = $false
 try {
-    $response = Invoke-WebRequest -Uri ("http://{0}:{1}/mcp" -f $config.host, $config.port) -Method Get -UseBasicParsing -TimeoutSec 3
-    $alive = $response.StatusCode -eq 405
+    $response = Invoke-LarkLocalRequest -Uri ("http://{0}:{1}/mcp" -f $config.host, $config.port) -Method "GET" -TimeoutSec 3
+    $alive = [int]$response.StatusCode -eq 405
 } catch {
-    $statusCode = $_.Exception.Response.StatusCode.value__
-    $alive = $statusCode -eq 405
+    $response = $_.Exception.Response
+    if ($response -and $response.StatusCode) {
+        $alive = [int]$response.StatusCode -eq 405
+    }
 }
 
 [pscustomobject]@{
