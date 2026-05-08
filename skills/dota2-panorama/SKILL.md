@@ -79,6 +79,69 @@ Create, edit, and debug Dota 2 Panorama UI with correct syntax, runtime APIs, an
 - When debugging, isolate the problem one layer at a time by removing or disabling a single class or selector, then re-checking the result.
 - In review or explanation, cite the actual file paths and the actual properties involved; do not replace code evidence with aesthetic judgment.
 
+## Stable Layout Layer Contract
+
+Use this contract for Panorama layouts whose child spacing, group alignment, animation safety, and input hitboxes must remain stable while content, language, or hover effects change.
+
+### Four-Layer Model
+
+Prefer this structure for each independent UI group:
+
+```text
+Area
+  Stack
+    Slot
+      Content
+```
+
+- `Area`: owns the available region and coarse page placement. It may be fixed-size, aligned, anchored, or reserved as one red-box region from a design. It does not own child spacing.
+- `Stack`: owns the content group's arrangement inside `Area`: flow direction, group alignment policy, and the rhythm policy between its direct child Slots. It may be centered, top-aligned, bottom-aligned, left-aligned, etc. Use `fit-children` on the axis whose size should be derived from children, so rhythm changes resize the group without manually retuning the Area.
+- `Slot`: owns one child item's stable layout footprint, optional local margin used to satisfy the Stack rhythm, internal content alignment, and animation safety space. It normally has explicit width/height and `overflow: noclip` so hover scale, glow, particles, or text effects do not clip or push siblings.
+- `Content`: owns the visible panel, label, image, or button behavior. Apply hover/active transforms to Content, not to Slot, so animation does not affect layout.
+
+### Rules
+
+- Separate independent regions as siblings. Do not nest a side panel inside a title, visual, or center stack just because it appears nearby.
+- Use one `Area` per high-level red-box region in a design: for example `CenterArea` and `SideArea`.
+- Put `Stack` inside the `Area` even when there is only one direction of flow; Stack is the group whose alignment policy remains stable while Slot rhythm changes.
+- Wrap every design-significant child in a `Slot` before the actual `Content`, especially buttons, images, animated panels, and text groups.
+- Treat spacing as a Stack-to-Slot contract: Stack defines the intended rhythm, while Slots may carry the actual local `margin-top`/`margin-left` values in Panorama CSS. Do not put inter-item spacing on Content transforms.
+- A Slot margin belongs to the relationship between Slots, not to the visual Content. If changing a margin should move only one visible element inside its own footprint, use internal Content alignment instead.
+- Keep hit testing on the interactive Content or a deliberately sized interactive Slot. Do not let a broad Area or decorative parent become the accidental receiver for button input.
+- If a button hover grows visually, the Slot must be large/noclip enough for the grown state, and the button's hitbox must match the intended clickable visual area in its normal state.
+- Avoid using large one-off margins to align a child to what appears correct. If a child position is wrong, first identify whether Area placement, Stack alignment/gaps, Slot footprint, or Content rendering owns that responsibility.
+- Treat rendered geometry as the source of truth. If a right-aligned child lands at an unexpected edge, infer the real parent width/anchor from that rendered position before changing margins.
+- Debug frames must show the real panel they validate. Do not use a separate overlay with hard-coded "expected" dimensions to prove a container size.
+- If one layout fix fails, stop and add a discriminating debug signal before trying another fix. Do not repeat same-class margin/align guesses.
+- XML-only attributes such as `hittest` and `hittestchildren` must stay in XML, not VCSS.
+- For images or movies with aspect-preserving scaling, isolate media from layout: `Slot -> Content -> MediaBox -> Image/Movie`. Slot/Content/MediaBox own fixed layout bounds; the media scales only inside MediaBox and must not define the layout boundary.
+
+### Example
+
+```text
+Root
+  CenterArea        # fixed page region, horizontally centered
+    CenterStack     # content group: flow, alignment policy, Slot rhythm
+      TitleSlot
+        TitleLabel
+      VisualSlot
+        VisualImage
+      PitySlot
+        PityTextGroup
+      ButtonSlot
+        ButtonRow
+          SingleButton
+          TenButton
+  SideArea          # fixed page region, top-right aligned
+    SideStack       # content group: flow, alignment policy, Slot rhythm
+      TicketSlot
+        TicketBadge
+      ProbabilitySlot
+        ProbabilityPanel
+      ExchangeSlot
+        ExchangeButton
+```
+
 ## Reusable Layout Templates
 
 Use these templates whenever the task is about building a stable Panorama layout, especially for menu pages, shop pages, task pages, or detail panels.
