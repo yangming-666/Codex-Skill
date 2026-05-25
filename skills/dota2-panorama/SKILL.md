@@ -79,6 +79,49 @@ Create, edit, and debug Dota 2 Panorama UI with correct syntax, runtime APIs, an
 - When debugging, isolate the problem one layer at a time by removing or disabling a single class or selector, then re-checking the result.
 - In review or explanation, cite the actual file paths and the actual properties involved; do not replace code evidence with aesthetic judgment.
 
+## Screen-To-Layout Coordinate Contract
+
+Use this contract whenever a HUD overlay, guide arrow, highlight, damage popup, or debug marker is positioned from runtime screen/window coordinates.
+
+- Treat `GetPositionWithinWindow()`, published panel rects, and raw screen coordinates as physical/window pixels unless proven otherwise.
+- Treat `SetPositionInPixels()` offsets as Panorama layout pixels. These coordinate spaces can differ on high-resolution clients.
+- Convert physical/window coordinates to Panorama layout coordinates before positioning:
+  ```js
+  function WindowToPanoramaScale() {
+      var screenW = Game.GetScreenWidth ? Number(Game.GetScreenWidth() || 0) : 0;
+      var screenH = Game.GetScreenHeight ? Number(Game.GetScreenHeight() || 0) : 0;
+      var scaleY = screenH > 0 ? 1080 / screenH : 1;
+      var scaleX = screenW > 0 ? 1920 / screenW : scaleY;
+      return { x: scaleX, y: scaleY };
+  }
+  ```
+- Scale `x`, `y`, `width`, and `height`; do not scale only position. Centering math must use scaled width/height.
+- Do not derive this scale from `$.GetContextPanel().actuallayoutwidth/height`; full-screen roots may report physical pixels too.
+- For full-screen absolute overlays, use:
+  ```css
+  .OverlayRoot {
+      width: 100%;
+      height: 100%;
+      ignore-parent-flow: true;
+      flow-children: none;
+      overflow: noclip;
+  }
+  .OverlayMarker {
+      ignore-parent-flow: true;
+      overflow: noclip;
+  }
+  ```
+- When toggling dynamically positioned panels, prefer `panel.visible = true` before `SetPositionInPixels()` and log actual layout after one frame if needed. `visibility: collapse` can produce temporary `0x0` or `3.402823e+38` positions before layout resolves.
+- If a marker is invisible, log both source rect and rendered panel geometry before changing assets:
+  - source `rect`, `screen_w`, `screen_h`, computed scale
+  - target panel `visible`, class list, `GetPositionWithinWindow()`, `actuallayoutwidth`, `actuallayoutheight`
+  - child image/media position and size
+- Diagnose by geometry first:
+  - rendered width/height `0`: layout/visibility issue
+  - rendered position outside screen: missing or wrong screen-to-layout scale
+  - rendered position and size correct but no pixels visible: image/resource/style/layering issue
+- If a guide or overlay must appear over every HUD element, place its `CustomUIElement` late in `custom_ui_manifest.xml`; do not rely only on `z-index` across independent HUD roots.
+
 ## Stable Layout Layer Contract
 
 Use this contract for Panorama layouts whose child spacing, group alignment, animation safety, and input hitboxes must remain stable while content, language, or hover effects change.

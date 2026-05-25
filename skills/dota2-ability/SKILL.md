@@ -36,11 +36,16 @@ Do not hardcode machine-specific absolute paths in this skill. Resolve roots dyn
 - Second: repo-relative path `Dota2 原版游戏配置` from current workspace root.
 - Third: ask user for the KV root path.
 
+2) Dota 2 Ability Source Library (Reference Lua/KV)
+- First: repo-relative path `tools/Dota2 ability` from current workspace root.
+- Purpose: Provides comprehensive Lua source (`spellLib/lua/heroes/`) and KV definitions (`spellLib/kv/abilities/`) for vanilla abilities.
+
 Before implementation, print the resolved paths you will use.
 
 Quick lookup commands (PowerShell, portable):
 - `if ($env:DOTA2_VANILLA_KV_ROOT) { Get-ChildItem $env:DOTA2_VANILLA_KV_ROOT -Recurse -File }`
 - `if (Test-Path ".\\Dota2 原版游戏配置") { Get-ChildItem ".\\Dota2 原版游戏配置" -Recurse -File }`
+- `if (Test-Path ".\\tools\\Dota2 ability") { Get-ChildItem ".\\tools\\Dota2 ability\\spellLib" -Recurse -File }`
 
 ## Workflow
 
@@ -51,6 +56,7 @@ Quick lookup commands (PowerShell, portable):
 
 2) Pull vanilla reference first (mandatory for rewrites)
 - Read source ability block from resolved vanilla KV root.
+- **Reference Lua Logic**: Check `tools/Dota2 ability/spellLib/lua/heroes/` for the corresponding hero/ability implementation.
 - Extract and list: `AbilityBehavior`, `AbilityUnitTarget*`, cast point/range, key specials.
 - For hero abilities, prefer `<vanilla_kv_root>/heroes/npc_dota_hero_<hero>.txt`.
 
@@ -99,6 +105,7 @@ When converting a vanilla ability to Lua, replicate baseline presentation unless
 
 5) Full-replication claim guardrail
 - Do not state "完全复刻" unless the gameplay timing and visible behavior are validated against vanilla behavior.
+- **Logic Parity**: Cross-check with `tools/Dota2 ability/spellLib/lua/heroes/` to ensure all edge cases and hidden mechanics (e.g., static field interactions, specific modifier behaviors) match the original implementation.
 
 ## Task Mapping
 
@@ -117,6 +124,9 @@ When converting a vanilla ability to Lua, replicate baseline presentation unless
 - Built-in modifier names (authoritative list): `references/built-in-modifier-names.md`
 - Awaken architecture notes: `references/awaken-ability-architecture.md`
 - Sound lookup: `$dota2-sound-lookup`
+- Dota 2 Ability Source Library (Lua/KV Reference): [tools/Dota2 ability](file:///tools/Dota2%20ability)
+- Hero Lua Reference Path: `tools/Dota2 ability/spellLib/lua/heroes/`
+- Ability KV Reference Path: `tools/Dota2 ability/spellLib/kv/abilities/`
 
 ## Assets
 

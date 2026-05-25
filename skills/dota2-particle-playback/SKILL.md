@@ -5,9 +5,9 @@ description: Inspect Dota 2 particle `.vpcf` files and determine the correct pla
 
 # Dota 2 Particle Playback
 
-## Overview
+## Environment
 
-Turn an actual particle file into a correct playback call. Do not guess control points, attach modes, or lifetime behavior from the particle name alone.
+- **Dota 2 Content Root**: `E:\SteamLibrary\steamapps\common\dota 2 beta\content\dota` (derived from `$env:DOTA2_VANILLA_CONTENT_ROOT`)
 
 ## Workflow
 
