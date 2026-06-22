@@ -515,6 +515,18 @@ If check fails, revise skill workflow/rules before retrying implementation.
 - When normalizing image paths in JS, handle `.vtex_c` → `.vtex` and `.vsvg_c` → `.vsvg`, and avoid appending `.vtex` to SVG paths.
 - Image aspect ratio is a hard-compatibility rule in Panorama:
   - Default safe pattern: use a wrapper `Panel` with fixed geometry, then render the image via `background-image`.
+  - For any finite, known image set (equipment slots, rarity frames, tabs, badges, reward types, state icons), bind the resource in VCSS with stable classes and toggle classes from JS. Do not set those images with `panel.style.backgroundImage` during list/tile creation; Panorama can render the first frame at the wrong size/position until hover/click/repaint.
+  - JS for finite image sets should only remove/add classes:
+    ```js
+    function SetSlotImageClass(panel, slot) {
+        for (var i = 1; i <= 6; i++) panel.RemoveClass("SlotImage" + i);
+        panel.AddClass("SlotImage" + String(slot));
+    }
+    ```
+    ```css
+    .SlotImage1 { background-image: url("file://{images}/.../slot_1.png"); }
+    .SlotImage2 { background-image: url("file://{images}/.../slot_2.png"); }
+    ```
   - Preferred CSS on that image panel:
     ```css
     .SomeImagePanel {
@@ -526,7 +538,8 @@ If check fails, revise skill workflow/rules before retrying implementation.
         background-repeat: no-repeat;
     }
     ```
-  - If the image path is dynamic in JS, set `panel.style.backgroundImage`, not a child `Image` with unsupported CSS hacks.
+  - Use `panel.style.backgroundImage` only for truly open-ended dynamic paths that cannot be enumerated as CSS classes (for example backend-provided user assets or arbitrary KV paths). When using it, keep the same fixed wrapper/media-box pattern and verify the first rendered frame before claiming the issue fixed.
+  - If a dynamic `backgroundImage` appears wrong until hover/click, treat that as a repaint/initial-layout bug. Convert the resource selection to CSS classes when the set is finite; do not keep tuning width, height, `contain`, margins, or click handlers.
   - Do not use `preserve-aspect-fit`; Panorama parser does not support it.
   - Do not invent CSS properties based on web habits. If a property is not known to Panorama, assume it is unsupported until verified.
   - Do not claim an image will keep aspect ratio unless the implementation uses `background-size: contain` or another Panorama-verified approach.
