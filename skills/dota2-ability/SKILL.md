@@ -117,6 +117,10 @@ When converting a vanilla ability to Lua, replicate baseline presentation unless
 
 ## References
 
+- ModDota VScripts API: https://iwasinminedream.github.io/moddota.github.io/api/vscripts/
+- ModDota Game Events: https://iwasinminedream.github.io/moddota.github.io/api/events
+- ModDota Original Abilities: https://iwasinminedream.github.io/moddota.github.io/api/abilities
+- ModDota Original Modifiers: https://iwasinminedream.github.io/moddota.github.io/api/modifiers
 - Dota 2 ability overview: `references/dota2-ability-overview.md`
 - Ability KV format: `references/ability-kv-format.md`
 - Lua patterns and hooks: `references/lua-ability-patterns.md`

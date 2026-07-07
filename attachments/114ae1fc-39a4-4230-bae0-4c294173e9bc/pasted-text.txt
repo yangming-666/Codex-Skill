@@ -1,0 +1,33 @@
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-197.4 1401.7 128.0
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-196.8 1391.7 128.0
+[SpectreShadowStepDebug] takeover_skip_no_friendly_summon caster={ent=369 name=npc_dota_auto_cast_dummy_spectre_2 team=2 alive=true summoned=true} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false}
+[SpectreShadowStepDebug] generic_order seq=5 caster={ent=369 name=npc_dota_auto_cast_dummy_spectre_2 team=2 alive=true summoned=true} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} ability=spectre_shadow_step cd_ready=true level=1 range=2000 interval=12.5
+[SpectreShadowStepDebug] cooldown_deferred path=generic seq=5 interval=12.5
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-196.1 1381.7 128.0
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-194.6 1358.4 128.0
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-193.5 1341.8 128.0
+[SpectreShadowStepDebug] generic_order_check seq=5 started=false pending=true elapsed=0.60 caster={ent=369 name=npc_dota_auto_cast_dummy_spectre_2 team=2 alive=true summoned=true} target_ent=1431 cooldown_ready=true current_active=spectre_shadow_step
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-192.1 1321.8 128.0
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-190.8 1301.9 128.0
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-189.5 1281.9 128.0
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-187.9 1258.7 128.0
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-186.8 1242.0 128.0
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-185.5 1222.1 128.0
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-184.2 1202.1 128.0
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-183.5 1192.1 128.0
+[SpectreShadowStepDebug] takeover_skip_no_friendly_summon caster={ent=369 name=npc_dota_auto_cast_dummy_spectre_2 team=2 alive=true summoned=true} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false}
+[SpectreShadowStepDebug] generic_order seq=6 caster={ent=369 name=npc_dota_auto_cast_dummy_spectre_2 team=2 alive=true summoned=true} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} ability=spectre_shadow_step cd_ready=true level=1 range=2000 interval=12.5
+[SpectreShadowStepDebug] cooldown_deferred path=generic seq=6 interval=12.5
+[SpectreShadowStepDebug] prepare target={nil} enemy={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} pos=-182.6 1178.8 128.0
+Send msg 7197 (k_EMsgGCMatchmakingStatsRequest), 8 bytes
+[SpectreShadowStepDebug] spellstart_enter seq=6 elapsed=0.27 caster={ent=369 name=npc_dota_auto_cast_dummy_spectre_2 team=2 alive=true summoned=true} target={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} has_kv=true
+[SpectreShadowStepDebug] modifier_created seq=6 caster={ent=369 name=npc_dota_auto_cast_dummy_spectre_2 team=2 alive=true summoned=true} parent={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} enemy=true has_state=true has_kv=true tick=0.10000000149012
+[SpectreShadowStepDebug] spellstart_accept seq=6 enemy=true friendly_summon=false duration=9 mod_added=true target={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false}
+[SpectreShadowStepDebug] cooldown_commit next=44.27 interval=12.5 cd_reduction=0
+Send msg 8673 (k_EMsgClientToGCRequestGuildData), 19 bytes
+Failed loading resource "panorama/images/players/0_png.vtex_c" (ERROR_FILEOPEN: File not found)
+[SpectreShadowStepDebug] spellstart_enter seq=6 elapsed=0.60 caster={ent=369 name=npc_dota_auto_cast_dummy_spectre_2 team=2 alive=true summoned=true} target={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false} has_kv=true
+[SpectreShadowStepDebug] spellstart_accept seq=6 enemy=true friendly_summon=false duration=9 mod_added=true target={ent=1431 name=npc_dota_monster_spider_swarm team=3 alive=true summoned=false}
+[SpectreShadowStepDebug] cooldown_commit next=44.60 interval=12.5 cd_reduction=0
+[SpectreShadowStepDebug] generic_order_check seq=6 started=true pending=false elapsed=0.60 caster={ent=369 name=npc_dota_auto_cast_dummy_spectre_2 team=2 alive=true summoned=true} target_ent=1431 cooldown_ready=true current_active=nil
+R

@@ -1,0 +1,80 @@
+[
+  {
+    "chatTitle": null,
+    "command": "Get-ChildItem reports -Recurse -Filter 'skill_402*.lua' | Select-Object FullName,Length",
+    "conversationId": "019f2823-38d9-7521-8176-db0f8420bee5",
+    "cwd": "D:\\analyse-game",
+    "id": "019f2823-38d9-7521-8176-db0f8420bee5:b02064df-690f-4135-8cb6-78d7cd7f1949:call_OaquVmK18672mYiTYRbZMCOf",
+    "itemId": "call_OaquVmK18672mYiTYRbZMCOf",
+    "osPid": null,
+    "processId": null,
+    "startedAtMs": 1783085312509,
+    "turnId": "b02064df-690f-4135-8cb6-78d7cd7f1949",
+    "updatedAtMs": 1783085312985
+  },
+  {
+    "chatTitle": null,
+    "command": "rg -n \"40200|Skill40200|reboundNum|penetrateNum|catapultNum|ActionLineTrackAttack\" reports -g \"skill_behavior_nodes.csv\" -g \"skill_behavior_summary.csv\"",
+    "conversationId": "019f2823-38d9-7521-8176-db0f8420bee5",
+    "cwd": "D:\\analyse-game",
+    "id": "019f2823-38d9-7521-8176-db0f8420bee5:b02064df-690f-4135-8cb6-78d7cd7f1949:call_JVstiPF9zrafBh9QiKUSywoP",
+    "itemId": "call_JVstiPF9zrafBh9QiKUSywoP",
+    "osPid": null,
+    "processId": null,
+    "startedAtMs": 1783085312509,
+    "turnId": "b02064df-690f-4135-8cb6-78d7cd7f1949",
+    "updatedAtMs": 1783085312985
+  },
+  {
+    "chatTitle": null,
+    "command": "rg -n \\\"\\\\[409001\\\\]|\\\\[132001\\\\]|\\\\[331001\\\\]|\\\\[120001\\\\]|\\\\[405001\\\\]\\\" reports\\\\actual_used_config_tables\\\\all_tables\\\\SkillData__data_skill_lev.lua",
+    "conversationId": "019f27d9-d3e0-7e70-8c4e-dcee652b7bee",
+    "cwd": "D:\\analyse-game",
+    "id": "019f27d9-d3e0-7e70-8c4e-dcee652b7bee:019f27de-cf04-7600-8021-bae2fca9b768:call_a27CNJ8FEWVaqyiYKAItmYr7",
+    "itemId": "call_a27CNJ8FEWVaqyiYKAItmYr7",
+    "osPid": null,
+    "processId": null,
+    "startedAtMs": 1783080403013,
+    "turnId": "019f27de-cf04-7600-8021-bae2fca9b768",
+    "updatedAtMs": 1783080403015
+  },
+  {
+    "chatTitle": null,
+    "command": "rg -n \\\"\\\\[40004\\\\]|\\\\[40009\\\\]|\\\\[10132\\\\]|\\\\[30013\\\\]|\\\\[30012\\\\]\\\" reports\\\\actual_used_config_tables\\\\all_tables\\\\HeroData__data_get_base.lua",
+    "conversationId": "019f27d9-d3e0-7e70-8c4e-dcee652b7bee",
+    "cwd": "D:\\analyse-game",
+    "id": "019f27d9-d3e0-7e70-8c4e-dcee652b7bee:019f27de-cf04-7600-8021-bae2fca9b768:call_po45exxIsHJvAowLBDLqI88i",
+    "itemId": "call_po45exxIsHJvAowLBDLqI88i",
+    "osPid": null,
+    "processId": null,
+    "startedAtMs": 1783080403013,
+    "turnId": "019f27de-cf04-7600-8021-bae2fca9b768",
+    "updatedAtMs": 1783080403015
+  },
+  {
+    "chatTitle": null,
+    "command": "& 'C:\\\\Users\\\\ym199\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\node\\\\bin\\\\node.exe' 'D:\\\\analyse-game\\\\outputs\\\\venom_fix\\\\fix_venom_range.mjs'",
+    "conversationId": "019f27d9-d3e0-7e70-8c4e-dcee652b7bee",
+    "cwd": "D:\\analyse-game\\outputs\\venom_fix",
+    "id": "019f27d9-d3e0-7e70-8c4e-dcee652b7bee:019f27da-7b09-7363-9a6a-1519292427d4:call_RoETsaCuxOIPsCn43ymU0lfD",
+    "itemId": "call_RoETsaCuxOIPsCn43ymU0lfD",
+    "osPid": null,
+    "processId": null,
+    "startedAtMs": 1783080220629,
+    "turnId": "019f27da-7b09-7363-9a6a-1519292427d4",
+    "updatedAtMs": 1783080220630
+  },
+  {
+    "chatTitle": null,
+    "command": "& 'C:\\\\Users\\\\ym199\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\\\\node\\\\bin\\\\node.exe' 'D:\\\\analyse-game\\\\.agent\\\\spreadsheet\\\\update_venom.mjs'",
+    "conversationId": "019f26cd-2679-70b0-927c-5f3151662f23",
+    "cwd": "D:\\analyse-game\\.agent\\spreadsheet",
+    "id": "019f26cd-2679-70b0-927c-5f3151662f23:019f2705-a876-7e41-a70f-8e9353bb8168:call_sSJAd6m55vLUFTs09oos1kKO",
+    "itemId": "call_sSJAd6m55vLUFTs09oos1kKO",
+    "osPid": null,
+    "processId": null,
+    "startedAtMs": 1783066131969,
+    "turnId": "019f2705-a876-7e41-a70f-8e9353bb8168",
+    "updatedAtMs": 1783066131970
+  }
+]

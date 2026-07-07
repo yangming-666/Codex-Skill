@@ -633,6 +633,9 @@ Use these rules whenever a worldpanel is anchored to entities and the visible co
 
 ## References
 
+- ModDota Panorama API: https://iwasinminedream.github.io/moddota.github.io/api/panorama/api
+- ModDota Panorama CSS: https://iwasinminedream.github.io/moddota.github.io/api/panorama/css
+- ModDota Panorama Events: https://iwasinminedream.github.io/moddota.github.io/api/panorama/events
 - Panorama framework: `references/panorama-framework.md`
 - Panorama API2: `references/panorama-api2.md`
 - Replica alignment rules: `references/replica-alignment-rules.md`

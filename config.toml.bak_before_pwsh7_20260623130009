@@ -1,0 +1,69 @@
+model_reasoning_effort = "medium"
+personality = "pragmatic"
+service_tier = "priority"
+
+notify = [ "C:\\Users\\ym199\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\1b23c930bdf84ed6\\bin\\node_modules\\@oai\\sky\\bin\\windows\\codex-computer-use.exe", "turn-ended" ]
+[mcp_servers.figma]
+url = "https://mcp.figma.com/mcp"
+
+[mcp_servers.lark]
+url = "http://127.0.0.1:33339/mcp"
+
+[mcp_servers.node_repl]
+type = "stdio"
+command = 'C:\Users\ym199\AppData\Local\OpenAI\Codex\bin\3c238e29bbc930ff\node_repl.exe'
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+BROWSER_USE_MARKETPLACE_NAME = "openai-bundled"
+CODEX_CLI_PATH = 'C:\Users\ym199\AppData\Local\OpenAI\Codex\bin\958d608b5e0546a5\codex.exe'
+CODEX_HOME = 'C:\Users\ym199\.codex'
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = ""
+NODE_REPL_NODE_PATH = 'C:\Users\ym199\AppData\Local\OpenAI\Codex\bin\5b9024f90663758b\node.exe'
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "496c7b3cb95b4bc20cff49b513150606e0da0000c92bf752206bee5a6c248423"
+NODE_REPL_TRUSTED_CODE_PATHS = 'C:\Users\ym199\.codex'
+NODE_REPL_UNTRUSTED_ENV_ALLOWLIST = "BROWSER_USE_MARKETPLACE_NAME"
+
+[windows]
+sandbox = "unelevated"
+[features]
+multi_agent = true
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[plugins."figma@openai-curated"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[projects.'E:\PVE']
+trust_level = "trusted"
+
+[projects.'d:\analyse-game']
+trust_level = "trusted"
+
+[marketplaces.openai-bundled]
+last_updated = "2026-06-22T10:13:17Z"
+source_type = "local"
+source = '\\?\C:\Users\ym199\.codex\.tmp\bundled-marketplaces\openai-bundled'
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-06-23T03:32:02Z"
+source_type = "local"
+source = '\\?\C:\Users\ym199\.cache\codex-runtimes\codex-primary-runtime\plugins\openai-primary-runtime'
