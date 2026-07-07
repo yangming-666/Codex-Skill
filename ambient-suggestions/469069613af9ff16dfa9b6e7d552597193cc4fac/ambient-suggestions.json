@@ -1,0 +1,160 @@
+{
+  "projectRoot": "E:\\PVE",
+  "generatedAtMs": 1783060853985,
+  "currentSuggestionIds": [
+    "6bfaa567-36e9-4c60-b88d-58706cbc9791",
+    "ba5a555a-918d-48c9-af6f-5e9353ac4164"
+  ],
+  "suggestions": [
+    {
+      "id": "72a39217-5554-4aaf-807d-b8b67b3a7632",
+      "title": "Make Tinker entry haste stack per dummy after today’s hero merge",
+      "description": "Your June 22 `新英雄` commit added Tinker’s entry haste, but it stores one manager-wide `remaining/source_id`, so a second Tinker can overwrite the first buff. Codex can patch it to track haste per slot or dummy and cleanly consume each stack.",
+      "prompt": "Fix the fresh Tinker entry-haste bug from today’s `新英雄` merge. In `game/dzsj/scripts/vscripts/shops/shop1_manager.lua` and `game/dzsj/scripts/vscripts/abilities/base/tinker_laser.lua`, change the entry-haste state so multiple `item_tinker_laser` units do not overwrite each other’s remaining shots or stat source ids. Keep the behavior the same for a single Tinker, explain the root cause, and make the smallest safe code change.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782123443576,
+      "updatedAtMs": 1782123443576
+    },
+    {
+      "id": "d221f726-f023-4d66-944b-80795c0bcf87",
+      "title": "Fix sprint level 3 wall impact doing no damage",
+      "description": "The June 21 sprint commit explicitly left `lvl3撞击无伤害`, and today’s follow-up only adjusted presentation. Codex can trace the level-3 trigger and impact path in `monster_abilities_sprint.lua` and land the actual gameplay fix.",
+      "prompt": "Fix the unresolved level-3 sprint bug noted in the recent commit history: the rhino-style charge reaches the wall but the impact does not deal damage. Inspect `game/dzsj/scripts/vscripts/abilities/monster/monster_abilities_sprint.lua`, find why level 3 reaches `ExecuteImpact` without applying the expected hit, implement the smallest safe fix, and summarize the root cause.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782123443576,
+      "updatedAtMs": 1782123443576
+    },
+    {
+      "id": "2eda4047-2895-43bd-b781-1d2b4f750253",
+      "title": "Restore swallowed monsters’ movement after devour spit-out",
+      "description": "The June 21 devour commit also recorded `吞噬后单位不动了`, and nothing newer appears to close it. Codex can inspect `monster_abilities_devour.lua`, repair the release path, and make sure the swallowed unit regains normal state after `SpitOut`.",
+      "prompt": "Fix the unresolved devour bug from the recent `吞噬技能增加特效` work: after a monster is swallowed and spat back out, it can stay stuck and stop moving. Inspect `game/dzsj/scripts/vscripts/abilities/monster/monster_abilities_devour.lua`, identify which state is not being restored on spit-out, implement a focused fix, and explain the failure mode.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782123443576,
+      "updatedAtMs": 1782123443576
+    },
+    {
+      "id": "06ed340e-c0c5-4769-a210-cd0b214ecdae",
+      "title": "Pull in today’s summon-target fix before landing Skywrath and Spectre",
+      "description": "`origin/feature/向僵尸开炮` moved today with `怪物技能冲锋完善+召唤物判定修正`, and your branch is still behind 1 while this batch adds `skywrath_mage_arcane_bolt`, `spectre_shadow_step`, dummy autocast changes, and summon-adjacent logic. Codex can merge that commit and patch any phantom synthesis or summon-target regressions before this branch drifts further.",
+      "prompt": "Merge the latest `origin/feature/向僵尸开炮` summon-target fix into my current branch, resolve conflicts against the new Skywrath/Spectre hero batch, and patch any gameplay regressions it introduces.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782189960134,
+      "updatedAtMs": 1782189960134
+    },
+    {
+      "id": "fa14bdb9-7013-432b-802b-b879138085f6",
+      "title": "Finish the last Tinker meta unlock and tooltip cleanup",
+      "description": "The only unstaged edits left are `shop1_items_meta.txt` and `addon_schinese.txt`, both around `tinker_laser_mecha_upgrade` and the simplified Tinker tooltip text. Codex can reconcile those with `markdown/设计/强化设计.md` so the mecha passive, annihilation cannon unlock, and displayed copy all match.",
+      "prompt": "Complete the remaining Tinker meta-growth cleanup by reconciling `shop1_items_meta.txt`, `addon_schinese.txt`, and `markdown/设计/强化设计.md`, then make the unlock tokens and tooltip text consistent.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782189960134,
+      "updatedAtMs": 1782189960134
+    },
+    {
+      "id": "f7706cf2-f56f-438b-84cb-957d348758fa",
+      "title": "Remove the temporary Naga Siren force-pick before branch QA",
+      "description": "This branch currently hardcodes `item_naga_siren_song_of_the_siren` in `shop1_manager.lua` and swaps the `hero_test` preset to Naga. That looks like a local test hook that will distort any further balance or recruit testing.",
+      "prompt": "Remove the temporary Naga Siren test hook from this branch. Revert the forced `name = \"item_naga_siren_song_of_the_siren\"` in `game/dzsj/scripts/vscripts/shops/shop1_manager.lua`, check whether `game/dzsj/scripts/vscripts/service/account/local_memory_toolmode_preset.lua` should also be reset, and leave the branch in a safe state for normal Shop1 QA without touching generated KV files.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782208554475,
+      "updatedAtMs": 1782208554475
+    },
+    {
+      "id": "878e863b-6a6b-4caa-b7e8-7620e5f861d7",
+      "title": "Finish the KV sync schema change for ProjectileSP damage fields",
+      "description": "You already staged `dzsj-kv-sync` support for `ProjectileSPDamageScale` and `ProjectileSP2DamageScale`, and there is an unstaged `main_test.go` covering root resolution. Codex can finish that tooling pass cleanly before more hero balance churn piles on top.",
+      "prompt": "Finish the current `dzsj-kv-sync` tooling pass on this branch. Review the staged `dzsj-kv-sync` changes, integrate the new `dzsj-kv-sync/cmd/dzsj-kv-sync/main_test.go`, verify the new `ProjectileSPDamageScale` / `ProjectileSP2DamageScale` field handling is coherent with the Shop1 source KV layout, and make only the source-side fixes needed to leave the sync migration internally consistent.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782208554475,
+      "updatedAtMs": 1782208554475
+    },
+    {
+      "id": "161b3888-8ec1-4d93-8a70-af4cc8d67720",
+      "title": "Clean up the mixed Hoodwink and Skywrath rebalance pass",
+      "description": "The branch now mixes source KV rebalance edits, localization updates, generated KV churn, and a manual Hoodwink Lua formula change from `2.8x` to `1 + passive/100`. Codex can consolidate that into a source-only, reviewable balance patch.",
+      "prompt": "Audit the current Hoodwink, Skywrath, Snapfire, Invoker, Tinker, and related Shop1 rebalance changes in this branch. Remove any generated-file noise or accidental mismatches, keep only the intended source edits, and call out anything inconsistent between Lua, source KV, and localization before making a clean patch.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782208554475,
+      "updatedAtMs": 1782208554475
+    },
+    {
+      "id": "2811e728-8df9-4072-877d-03d148c798d4",
+      "title": "Finish the snow monster devour chain from today’s audit row",
+      "description": "Yesterday’s `怪物技能配置补全` added `monster_abilities_devour.lua`, but today’s `主线前100关新增怪物_全表机制核查.tsv` spells out behavior the current script still doesn’t cover, including the swallow timing/details and death-triggered self-destruct chain. Codex can patch the Lua and source KV now instead of leaving the audit as a note.",
+      "prompt": "Use the `雪怪` row in `考据/解/主线前100关新增怪物_全表机制核查.tsv` to finish the `monster_abilities_devour.lua` implementation and any non-generated source KV it depends on. Compare the audited behavior against the current script, implement the missing pieces, and summarize the exact gaps you closed.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782273821701,
+      "updatedAtMs": 1782273821701
+    },
+    {
+      "id": "8905ea6e-bb9e-4e4e-b0d2-6c868edfac8d",
+      "title": "Backfill today’s first-100-stage monster audit into source configs",
+      "description": "The fresh TSV still has many rows marked `效果概述为空但手游有机制字段` or `可能缺关键词`, especially around 抗性/免疫/召唤/回血 wording. Codex can turn that audit into source-file updates instead of leaving the discrepancies stranded in `考据/解`.",
+      "prompt": "Take `考据/解/主线前100关新增怪物_全表机制核查.tsv` and update the non-generated monster source files with the missing effect summaries and keywords it identifies. Start with the rows that still have empty summaries or keyword gaps, and avoid editing generated KV directly.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782273821701,
+      "updatedAtMs": 1782273821701
+    },
+    {
+      "id": "7d9a1614-729a-440f-bcbf-8d9f84a67055",
+      "title": "Automate the enhance dump review HTML and backup churn",
+      "description": "You generated a same-day chain of `英雄技能强化配置` backups plus `本次dump配置机制复核.html`, which is a strong sign the current review loop is still manual and noisy. Codex can add a local script/task that snapshots once, regenerates the review artifact, and keeps those files from cluttering normal git work.",
+      "prompt": "Add a local workflow in this repo for `考据/解/英雄技能强化配置.xlsx` that creates one timestamped backup, regenerates the `本次dump配置机制复核.html`-style review artifact, and reduces backup/report git noise. Reuse existing scripts or tasks if possible, and document how to run it.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782273821701,
+      "updatedAtMs": 1782273821701
+    },
+    {
+      "id": "e3a22cb6-137f-4cef-8733-2450d6f69584",
+      "title": "Close the three fresh P0 hero-enhance audit blockers",
+      "description": "The new `outputs/hero_enhance_audit` report from today flags only three P0 blockers: 哪吒 `三昧真火`, 剑仙 `巨剑术`, and 剑圣 `精益求精`. Codex can patch the Lua/KV source and design mapping from the audit evidence instead of you chasing them manually.",
+      "prompt": "Use the fresh audit in `outputs/hero_enhance_audit` to fix the three P0 blockers it found today: 哪吒 `三昧真火` missing the 50% trigger gate, 剑仙 `巨剑术` missing range/effect-scale handling, and 剑圣 `精益求精` missing design mapping. Read the relevant audit CSVs and project files, implement the source-side fixes only in non-generated files, and summarize what still needs explicit design confirmation.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782293213511,
+      "updatedAtMs": 1782293213511
+    },
+    {
+      "id": "3b9a1637-f257-4178-a148-4fc3719c000a",
+      "title": "Wire structured runtime evidence logging for hero enhance verification",
+      "description": "Today’s audit says all 353 hero-enhance rows are still `未实测`, but it also found reusable debug hooks in `enhance_common.lua`, `shop1_enhance_manager.lua`, and `backend_debug.lua`. Codex can turn those into schema-shaped logs so the audit can start passing with real evidence instead of manual screenshots.",
+      "prompt": "Implement a minimal structured runtime-evidence pipeline for hero enhance verification using the schema and plan in `outputs/hero_enhance_audit`. Reuse existing debug hooks where possible, add opt-in logging only, and make it easy to capture purchased-enhance, trigger, result, and baseline records for the P0 cases first. Then explain how to collect evidence for the next run without touching generated KV.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1782293213511,
+      "updatedAtMs": 1782293213511
+    },
+    {
+      "id": "6bfaa567-36e9-4c60-b88d-58706cbc9791",
+      "title": "Finish the unfinished Shredder ignite merge on feature/向僵尸开炮",
+      "description": "Your branch is still behind `origin/feature/向僵尸开炮` by two commits, and one of them is literally `伐木机飞轮施加点燃（未全完成`. I can reconcile that unfinished ignite work with your current local `shredder_chakram` and soundevent edits, then patch the remaining gameplay gaps.",
+      "prompt": "Reconcile my local `feature/向僵尸开炮` changes with the remote unfinished `伐木机飞轮施加点燃（未全完成` work. Focus on `shredder_chakram.lua`, the ignite/debuff flow, and any overlapping Shop1 sound changes, then finish the missing gameplay pieces without touching generated KV directly.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783060853985,
+      "updatedAtMs": 1783060853985
+    },
+    {
+      "id": "ba5a555a-918d-48c9-af6f-5e9353ac4164",
+      "title": "Close the remaining Shop1 sound coverage gaps in this soundevent pass",
+      "description": "The last two local commits are both `音效`, and the working tree still has a broad WIP across `game_sounds_shop1_*.vsndevts` plus the matching ability Lua files. I can compare the touched heroes against `markdown/设计/强化设计.md` and the new `shop1_ability_sound.md`, then patch only the missing phases and bad callsites.",
+      "prompt": "Audit the current Shop1 sound pass against `markdown/设计/强化设计.md` and `markdown/md/shop1_ability_sound.md`. Only inspect the heroes already touched in this branch, find missing or inconsistent sound phases between Lua and `game_sounds_shop1_*.vsndevts`, and prepare the smallest source-only patch set.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783060853985,
+      "updatedAtMs": 1783060853985
+    }
+  ]
+}

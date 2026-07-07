@@ -1,0 +1,151 @@
+{
+  "projectRoot": "D:\\analyse-game",
+  "generatedAtMs": 1783343383975,
+  "currentSuggestionIds": [
+    "f63359e5-1a25-47a4-875c-d909ad84ee0e",
+    "561e9d83-0daa-45cc-9c6e-5b12ed4d22c4",
+    "2bf00000-b7f6-488c-9cd2-fca3124120e6"
+  ],
+  "suggestions": [
+    {
+      "id": "cc47d7b2-d186-471c-aa3b-08872b3d366d",
+      "title": "Finish the 1001 runtime workbook with real HP and speed fields",
+      "description": "`tools/gamedump/manual_capture_1001*.ps1` and the 1001 reports were updated recently, but `MANUAL_1001_RUNTIME_CAPTURE.md` still lists `MonsterEntityData`, `dicGateMonsterHpData`, and runtime attrs as missing. Codex can extend the analyzer so your next dump series writes real per-instance HP, move speed, and attack stats straight into `E:\\PVE\\考据\\1001.xlsx`.",
+      "prompt": "Extend the 1001 dump analysis pipeline so it extracts `MonsterEntityData`, `EntityAttrDataInfo`, and `BattleReportCtrl.dicGateMonsterHpData` from manual 1001 dumps, then writes `runtime_attr_max_hp`, `runtime_getattr_max_hp`, `runtime_move_speed`, `runtime_phy_atk`, and `runtime_atk_speed` into `E:\\PVE\\考据\\1001.xlsx`. Reuse the current `reports/extract_tools/analyze_1001_dump_to_xlsx.py` flow and update any supporting scripts or docs needed for the new fields.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783062560995,
+      "updatedAtMs": 1783062560995
+    },
+    {
+      "id": "7b86a8a6-876b-4f88-bb53-c89eca4ca05f",
+      "title": "Automate the stage-settlement probe from patched APK to Excel",
+      "description": "The repo already has a patched settlement probe APK and parsing scripts, but `STAGE_SETTLEMENT_RUNTIME_CAPTURE.md` says the flow is still blocked on signing/install setup. Codex can remove that open loop by wiring a one-command local pipeline that checks Java/keystore/adb prerequisites, signs the APK, installs it, tails the marker logs, and converts the capture to JSONL/Excel-ready artifacts.",
+      "prompt": "Build a one-command stage-settlement capture pipeline around the existing patcher output. It should validate Java, keystore, and `adb` availability; sign `reports/apk/stage_settlement_probe.unsigned.apk`; install it when a device is connected; tail `[STAGE_SETTLEMENT_SEND16509]` and `[STAGE_SETTLEMENT_RECV16510]` logcat markers; and hand the result to the existing extraction scripts. Add or update scripts and docs in this repo so I can run the whole probe with one command next time.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783062560995,
+      "updatedAtMs": 1783062560995
+    },
+    {
+      "id": "ed54ddb8-3cdd-4105-aaae-e83cf786b76f",
+      "title": "Close the highest-frequency wall-attack behavior tree gaps first",
+      "description": "`reports/gap_audit/WALL_ATTACK_SKILL_GAP_AUDIT.md` was refreshed recently and shows the biggest remaining misses are shared wall-attack/ranged skills like `810000`, `810003`, `810032`, and `Skill2`. Codex can add a targeted capture-and-backfill workflow so one new dump round collapses the most common monster timing gaps instead of chasing one-off skills.",
+      "prompt": "Use the current wall-attack gap audit to build a targeted workflow for the shared missing behavior trees first: `play_id=810000`, `play_id=2`, and the common ranged wall-attack play_ids such as `810003` and `810032`. Add any scripts, manifests, or report-generation updates needed so a new capture round can be parsed and backfilled into the monster skill workbook and then re-audited automatically.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783062560995,
+      "updatedAtMs": 1783062560995
+    },
+    {
+      "id": "3624bffc-e9f5-4454-9c0b-ee9d56815658",
+      "title": "把今天的 1001 手动 dump 接到首波 92001 真值结论里",
+      "description": "今天刚改了 `manual_capture_1001*.ps1`，同时新增了 `1001_wave1_92001_hp_damage_death_source_analysis.md`，现在只差一轮 wave1/wave4 dump 就能把 `fix_mon_hp` 和引导血量覆盖从源码推导变成运行时实锤。Codex 可以直接吃 dump、更新 `1001.xlsx` 和分析结论。",
+      "prompt": "请按 `reports/MANUAL_1001_RUNTIME_CAPTURE.md` 的流程，接收我刚抓的 1001 wave1 / wave4 dump，分析 92001 的运行时实例属性，确认 `fix_mon_hp` 和新手引导血量覆盖是否生效，并把结论回填到 `E:\\PVE\\考据\\1001.xlsx` 与项目里的 1001 分析报告。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783080969668,
+      "updatedAtMs": 1783080969668
+    },
+    {
+      "id": "bc2feb5e-d12e-4741-a3fa-3218a4f53837",
+      "title": "回填 lineup2/3 新恢复行为树到英雄技能强化配置",
+      "description": "你今天已经在做英雄技能表，仓库里也刚有 `tools/update_hero_skill_excel_lineup2_3_results.py` 和多份 lineup2/3、advanced account 的新 summary。现在最省事的下一步是把这些恢复结果批量回填进 `英雄技能强化配置.xlsx`，顺手只保留 31102、13200 这种真正还没解开的缺口。",
+      "prompt": "基于 `tools/update_hero_skill_excel_lineup2_3_results.py` 和 `reports/skill_behavior_trees_*` 的最新 summary，把今天新恢复的行为树批量回填到 `E:\\PVE\\考据\\解\\英雄技能强化配置.xlsx`，生成复核报告，并把已经闭环的缺口从表里清掉，只保留像 31102、13200 这种仍需运行时补证的项。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783080969668,
+      "updatedAtMs": 1783080969668
+    },
+    {
+      "id": "fbb3815a-6d0f-48a8-bc0c-c7c7ac7ff3d3",
+      "title": "先补 Skill810000 和 Skill2 的墙攻行为树真值",
+      "description": "今天重跑的 `WALL_ATTACK_SKILL_GAP_AUDIT.md` 已经把文档覆盖补齐，但出现次数最高的墙攻基础树 `810000` / `2` 仍是大缺口。把这两个 play_id 的动作节点、命中帧和扣墙帧补出来，能一次推进大量 `all_levels.csv` 和怪物 Excel 的时序准确度。",
+      "prompt": "围绕 `reports/gap_audit/WALL_ATTACK_SKILL_GAP_AUDIT.md` 里频次最高但仍缺行为树真值的 `Skill810000` 和 `Skill2`，制定并执行一次最小补证流程：优先利用现有 dump/脚本恢复动作节点、命中帧和扣墙帧，并把结果回填到 `怪物技能配置机制.xlsx`、`reports/MONSTER_SKILL_MECHANICS.md` 以及需要修正的 `all_levels.csv` 字段。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783080969668,
+      "updatedAtMs": 1783080969668
+    },
+    {
+      "id": "cca141fb-8da4-4a87-9467-32b9fc0961bc",
+      "title": "补齐 stage settlement probe 的 Windows 预检和一键采样链路",
+      "description": "`STAGE_SETTLEMENT_RUNTIME_CAPTURE.md` 里已经有补丁 APK 和采样入口，但当前机器卡在 Java、debug keystore 和 ADB 在线状态。现在补一套 Windows 预检、签名、安装、拉取、拆表脚本，等设备一连上就能直接抓 16509/16510。",
+      "prompt": "把 D:\\analyse-game 里 stage settlement probe 的 Windows 流程补成一键可跑：先检查 Java、apksigner、debug keystore、adb 设备状态，再串起 patched Assembly 打包、签名、安装、logcat/文件拉取、最后生成可直接导入的结算样本输出。请基于现有 `reports/STAGE_SETTLEMENT_RUNTIME_CAPTURE.md`、`tools/stage_settlement_patcher/`、`tools/runtime_hook/RuntimeStageSettlementExport.cs` 和现有抽取脚本来做，不要重起一套。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783148748427,
+      "updatedAtMs": 1783148748427
+    },
+    {
+      "id": "5a5c85d4-4db0-464e-8a2b-ea4b437c98bb",
+      "title": "把 43 个高频强化图腾缺口整理成可直接跑的采样批次",
+      "description": "今天的 `pve_excel_gap_audit` 显示强化还有 145 个 exact behavior tree 缺口，图腾还有 53 个；`pve_scan_queue_coverage.json` 又说明高频 skill id 已经都进了扫描队列。下一步最省力的是把这些 id 按英雄和触发条件编成可执行批次，而不是继续手工点对点补。",
+      "prompt": "基于 `outputs/hero_skill_enhance_update/pve_excel_gap_audit.json` 和 `pve_scan_queue_coverage.json`，把当前高频强化/专属图腾缺口整理成一套可直接执行的 runtime 采样批次：按英雄分组、列出 skill id、优先级、需要触发的强化/图腾条件、建议用的 Frida agent 和预期回填到 Excel 的位置。优先产出一个机器可读的批次清单和一个给人看的执行说明，直接接现有 `tools/frida/scan_pve_remaining_queue_agent.js`。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783148748427,
+      "updatedAtMs": 1783148748427
+    },
+    {
+      "id": "0ba74e8b-21ee-4293-958a-e25f7e2df172",
+      "title": "先补最常见墙攻与远程怪的行为树采样入口",
+      "description": "`WALL_ATTACK_SKILL_GAP_AUDIT.md` 已经把 47 个有效打墙技能排出来了，最高频的 810011、810113、810028、810114、810112 仍然缺实际 dump 覆盖。把这些高频墙攻技能做成优先采样入口，会比继续扩文档更快地提高 `all_levels.csv` 的可信度。",
+      "prompt": "读取 `reports/gap_audit/WALL_ATTACK_SKILL_GAP_AUDIT.md`，针对出现次数最高但仍缺行为树覆盖的墙攻/远程怪技能，做一个最小可用的补证工具链：优先级排序、建议的运行时抓取入口、现有解析脚本能否直接复用、缺哪些解析字段、以及最终怎样回填到 `all_levels.csv` 和怪物机制工作簿。重点先覆盖 810011、810113、810028、810114、810112 这批高频技能。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783148748427,
+      "updatedAtMs": 1783148748427
+    },
+    {
+      "id": "0fa655c5-dc90-43c1-8727-5fc2a92713fb",
+      "title": "Close the 剑仙、哪吒、暴风、黑百合 rows in the July 3 skill HTML",
+      "description": "Your July 3 Codex thread asked for exact mechanics on these heroes, and the July 4 gap audit still flags broad unresolved main-skill rows around 黑百合、哪吒、剑仙. Codex can trace the real SkillData/PassiveData/BuffData chain and regenerate the affected HTML wording without touching the source workbook by hand.",
+      "prompt": "核对并补全 7 月 3 日那版主技能 HTML 里 剑仙、哪吒、暴风、黑百合 的未落实机制。请直接沿着 SkillData / PassiveData / BuffData / 行为树证据链，把具体倍率、目标数、持续时间、tick、爆炸范围、控制/中毒联动都补出来，并重生成对应的 HTML 说明；如果某项仍无静态证据，就把缺的运行时采样点精确列到同一份输出里。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783314075231,
+      "updatedAtMs": 1783314075231
+    },
+    {
+      "id": "f65fac9e-6f31-42be-a761-22b0a628ecfc",
+      "title": "Turn the new stage settlement tooling into one runnable capture probe",
+      "description": "The new settlement patcher and parsers landed recently, but the July 4 verification still ends with `adb_state: no devices`, and the remaining blocker is real 16509/16510 sample capture. Codex can collapse the current patch, sign, run, and parse steps into one command so the next time a device is available you only need to connect and execute.",
+      "prompt": "把当前关卡结算采样链路整理成一个可直接执行的一键 probe。基于现有 stage_settlement_patcher、runtime_hook、run_stage_settlement_probe.ps1、extract_stage_settlement_logcat/jsonl.py，把补丁、签名、安装、logcat 采集、结果解析串起来，输出一份最短操作说明和需要新增/修改的脚本，目标是设备一连上就能开始抓 16509/16510 真样本。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783314075231,
+      "updatedAtMs": 1783314075231
+    },
+    {
+      "id": "f63359e5-1a25-47a4-875c-d909ad84ee0e",
+      "title": "Backfill the biggest exact gaps in 英雄技能强化配置.xlsx",
+      "description": "The July 4 audit still shows 145 exact behavior-tree gaps, heavily concentrated in skill IDs 10902, 33200, 40820, and 13200. Codex can mine the existing dumps, reports, and scripts first, then leave you only the truly runtime-blocked rows.",
+      "prompt": "基于 outputs/hero_skill_enhance_update/pve_excel_gap_audit.json，先处理 英雄技能强化配置.xlsx 里 exact_behavior_tree_gap 最集中的前一批条目。优先 skill_id 10902、33200、40820、13200，以及 钢铁汪、孙悟空、卡卡。请从现有 dump、脚本和报告里尽量回填可确认的机制，剩余缺口生成一个可直接继续补证的清单。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783343383975,
+      "updatedAtMs": 1783343383975
+    },
+    {
+      "id": "561e9d83-0daa-45cc-9c6e-5b12ed4d22c4",
+      "title": "Prepare one runtime capture batch for the current hero enhance gaps",
+      "description": "`verify_pve_html_state.json` says the July 4 HTML pass is structurally fine, but ADB was offline and blocked fresh validation. Codex can turn the current gap audit into one tight capture batch so the next emulator session clears multiple open hero rows at once.",
+      "prompt": "根据 outputs/hero_skill_enhance_update/pve_excel_gap_audit.json 和 reports/REPLAY_DATA_GAPS_AND_ACQUISITION_PLAN.md，整理一份下一轮 runtime capture 批次。把需要触发的英雄/强化/图腾、对应 skill_id、预期证据、建议执行顺序，直接落成可运行的命令或脚本清单，优先覆盖当前 hero enhance 的 exact gap。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783343383975,
+      "updatedAtMs": 1783343383975
+    },
+    {
+      "id": "2bf00000-b7f6-488c-9cd2-fca3124120e6",
+      "title": "Cluster the remaining monster behavior-tree gaps into a minimal capture plan",
+      "description": "The monster workbook refresh is recent, but `REPLAY_DATA_GAPS_AND_ACQUISITION_PLAN.md` still leaves 262 monster rows waiting on behavior-tree or runtime proof. Codex can collapse that into a smaller set of shared `play_id` and scenario captures instead of more one-off hunts.",
+      "prompt": "把 怪物技能配置机制.xlsx 当前缺的行为树/运行时验证条目按共用 play_id、技能族和怪物场景做聚类，生成一份最小化补证计划。优先基础打墙、远程弹道、特殊撞墙/自爆三类，并输出需要更新的 Excel sheet 和对应证据来源。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783343383975,
+      "updatedAtMs": 1783343383975
+    }
+  ]
+}

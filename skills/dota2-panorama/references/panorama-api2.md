@@ -1,7 +1,7 @@
-# Panorama JavaScript API2 (Valve Wiki)
+# Panorama JavaScript API2 (ModDota Wiki)
 
-Use this reference to guide Panorama JS API usage. For full signatures and edge cases, consult the official page:
-https://developer.valvesoftware.com/wiki/Dota_2_Workshop_Tools/Panorama/Javascript/API2
+Use this reference to guide Panorama JS API usage. For full signatures and edge cases, consult the ModDota page:
+https://iwasinminedream.github.io/moddota.github.io/api/panorama/api
 
 This is a curated API2 index. Verify details against the wiki when precision matters.
 

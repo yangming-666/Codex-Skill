@@ -79,6 +79,112 @@ Create, edit, and debug Dota 2 Panorama UI with correct syntax, runtime APIs, an
 - When debugging, isolate the problem one layer at a time by removing or disabling a single class or selector, then re-checking the result.
 - In review or explanation, cite the actual file paths and the actual properties involved; do not replace code evidence with aesthetic judgment.
 
+## Screen-To-Layout Coordinate Contract
+
+Use this contract whenever a HUD overlay, guide arrow, highlight, damage popup, or debug marker is positioned from runtime screen/window coordinates.
+
+- Treat `GetPositionWithinWindow()`, published panel rects, and raw screen coordinates as physical/window pixels unless proven otherwise.
+- Treat `SetPositionInPixels()` offsets as Panorama layout pixels. These coordinate spaces can differ on high-resolution clients.
+- Convert physical/window coordinates to Panorama layout coordinates before positioning:
+  ```js
+  function WindowToPanoramaScale() {
+      var screenW = Game.GetScreenWidth ? Number(Game.GetScreenWidth() || 0) : 0;
+      var screenH = Game.GetScreenHeight ? Number(Game.GetScreenHeight() || 0) : 0;
+      var scaleY = screenH > 0 ? 1080 / screenH : 1;
+      var scaleX = screenW > 0 ? 1920 / screenW : scaleY;
+      return { x: scaleX, y: scaleY };
+  }
+  ```
+- Scale `x`, `y`, `width`, and `height`; do not scale only position. Centering math must use scaled width/height.
+- Do not derive this scale from `$.GetContextPanel().actuallayoutwidth/height`; full-screen roots may report physical pixels too.
+- For full-screen absolute overlays, use:
+  ```css
+  .OverlayRoot {
+      width: 100%;
+      height: 100%;
+      ignore-parent-flow: true;
+      flow-children: none;
+      overflow: noclip;
+  }
+  .OverlayMarker {
+      ignore-parent-flow: true;
+      overflow: noclip;
+  }
+  ```
+- When toggling dynamically positioned panels, prefer `panel.visible = true` before `SetPositionInPixels()` and log actual layout after one frame if needed. `visibility: collapse` can produce temporary `0x0` or `3.402823e+38` positions before layout resolves.
+- If a marker is invisible, log both source rect and rendered panel geometry before changing assets:
+  - source `rect`, `screen_w`, `screen_h`, computed scale
+  - target panel `visible`, class list, `GetPositionWithinWindow()`, `actuallayoutwidth`, `actuallayoutheight`
+  - child image/media position and size
+- Diagnose by geometry first:
+  - rendered width/height `0`: layout/visibility issue
+  - rendered position outside screen: missing or wrong screen-to-layout scale
+  - rendered position and size correct but no pixels visible: image/resource/style/layering issue
+- If a guide or overlay must appear over every HUD element, place its `CustomUIElement` late in `custom_ui_manifest.xml`; do not rely only on `z-index` across independent HUD roots.
+
+## Stable Layout Layer Contract
+
+Use this contract for Panorama layouts whose child spacing, group alignment, animation safety, and input hitboxes must remain stable while content, language, or hover effects change.
+
+### Four-Layer Model
+
+Prefer this structure for each independent UI group:
+
+```text
+Area
+  Stack
+    Slot
+      Content
+```
+
+- `Area`: owns the available region and coarse page placement. It may be fixed-size, aligned, anchored, or reserved as one red-box region from a design. It does not own child spacing.
+- `Stack`: owns the content group's arrangement inside `Area`: flow direction, group alignment policy, and the rhythm policy between its direct child Slots. It may be centered, top-aligned, bottom-aligned, left-aligned, etc. Use `fit-children` on the axis whose size should be derived from children, so rhythm changes resize the group without manually retuning the Area.
+- `Slot`: owns one child item's stable layout footprint, optional local margin used to satisfy the Stack rhythm, internal content alignment, and animation safety space. It normally has explicit width/height and `overflow: noclip` so hover scale, glow, particles, or text effects do not clip or push siblings.
+- `Content`: owns the visible panel, label, image, or button behavior. Apply hover/active transforms to Content, not to Slot, so animation does not affect layout.
+
+### Rules
+
+- Separate independent regions as siblings. Do not nest a side panel inside a title, visual, or center stack just because it appears nearby.
+- Use one `Area` per high-level red-box region in a design: for example `CenterArea` and `SideArea`.
+- Put `Stack` inside the `Area` even when there is only one direction of flow; Stack is the group whose alignment policy remains stable while Slot rhythm changes.
+- Wrap every design-significant child in a `Slot` before the actual `Content`, especially buttons, images, animated panels, and text groups.
+- Treat spacing as a Stack-to-Slot contract: Stack defines the intended rhythm, while Slots may carry the actual local `margin-top`/`margin-left` values in Panorama CSS. Do not put inter-item spacing on Content transforms.
+- A Slot margin belongs to the relationship between Slots, not to the visual Content. If changing a margin should move only one visible element inside its own footprint, use internal Content alignment instead.
+- Keep hit testing on the interactive Content or a deliberately sized interactive Slot. Do not let a broad Area or decorative parent become the accidental receiver for button input.
+- If a button hover grows visually, the Slot must be large/noclip enough for the grown state, and the button's hitbox must match the intended clickable visual area in its normal state.
+- Avoid using large one-off margins to align a child to what appears correct. If a child position is wrong, first identify whether Area placement, Stack alignment/gaps, Slot footprint, or Content rendering owns that responsibility.
+- Treat rendered geometry as the source of truth. If a right-aligned child lands at an unexpected edge, infer the real parent width/anchor from that rendered position before changing margins.
+- Debug frames must show the real panel they validate. Do not use a separate overlay with hard-coded "expected" dimensions to prove a container size.
+- If one layout fix fails, stop and add a discriminating debug signal before trying another fix. Do not repeat same-class margin/align guesses.
+- XML-only attributes such as `hittest` and `hittestchildren` must stay in XML, not VCSS.
+- For images or movies with aspect-preserving scaling, isolate media from layout: `Slot -> Content -> MediaBox -> Image/Movie`. Slot/Content/MediaBox own fixed layout bounds; the media scales only inside MediaBox and must not define the layout boundary.
+
+### Example
+
+```text
+Root
+  CenterArea        # fixed page region, horizontally centered
+    CenterStack     # content group: flow, alignment policy, Slot rhythm
+      TitleSlot
+        TitleLabel
+      VisualSlot
+        VisualImage
+      PitySlot
+        PityTextGroup
+      ButtonSlot
+        ButtonRow
+          SingleButton
+          TenButton
+  SideArea          # fixed page region, top-right aligned
+    SideStack       # content group: flow, alignment policy, Slot rhythm
+      TicketSlot
+        TicketBadge
+      ProbabilitySlot
+        ProbabilityPanel
+      ExchangeSlot
+        ExchangeButton
+```
+
 ## Reusable Layout Templates
 
 Use these templates whenever the task is about building a stable Panorama layout, especially for menu pages, shop pages, task pages, or detail panels.
@@ -409,6 +515,18 @@ If check fails, revise skill workflow/rules before retrying implementation.
 - When normalizing image paths in JS, handle `.vtex_c` → `.vtex` and `.vsvg_c` → `.vsvg`, and avoid appending `.vtex` to SVG paths.
 - Image aspect ratio is a hard-compatibility rule in Panorama:
   - Default safe pattern: use a wrapper `Panel` with fixed geometry, then render the image via `background-image`.
+  - For any finite, known image set (equipment slots, rarity frames, tabs, badges, reward types, state icons), bind the resource in VCSS with stable classes and toggle classes from JS. Do not set those images with `panel.style.backgroundImage` during list/tile creation; Panorama can render the first frame at the wrong size/position until hover/click/repaint.
+  - JS for finite image sets should only remove/add classes:
+    ```js
+    function SetSlotImageClass(panel, slot) {
+        for (var i = 1; i <= 6; i++) panel.RemoveClass("SlotImage" + i);
+        panel.AddClass("SlotImage" + String(slot));
+    }
+    ```
+    ```css
+    .SlotImage1 { background-image: url("file://{images}/.../slot_1.png"); }
+    .SlotImage2 { background-image: url("file://{images}/.../slot_2.png"); }
+    ```
   - Preferred CSS on that image panel:
     ```css
     .SomeImagePanel {
@@ -420,7 +538,8 @@ If check fails, revise skill workflow/rules before retrying implementation.
         background-repeat: no-repeat;
     }
     ```
-  - If the image path is dynamic in JS, set `panel.style.backgroundImage`, not a child `Image` with unsupported CSS hacks.
+  - Use `panel.style.backgroundImage` only for truly open-ended dynamic paths that cannot be enumerated as CSS classes (for example backend-provided user assets or arbitrary KV paths). When using it, keep the same fixed wrapper/media-box pattern and verify the first rendered frame before claiming the issue fixed.
+  - If a dynamic `backgroundImage` appears wrong until hover/click, treat that as a repaint/initial-layout bug. Convert the resource selection to CSS classes when the set is finite; do not keep tuning width, height, `contain`, margins, or click handlers.
   - Do not use `preserve-aspect-fit`; Panorama parser does not support it.
   - Do not invent CSS properties based on web habits. If a property is not known to Panorama, assume it is unsupported until verified.
   - Do not claim an image will keep aspect ratio unless the implementation uses `background-size: contain` or another Panorama-verified approach.
@@ -514,6 +633,9 @@ Use these rules whenever a worldpanel is anchored to entities and the visible co
 
 ## References
 
+- ModDota Panorama API: https://iwasinminedream.github.io/moddota.github.io/api/panorama/api
+- ModDota Panorama CSS: https://iwasinminedream.github.io/moddota.github.io/api/panorama/css
+- ModDota Panorama Events: https://iwasinminedream.github.io/moddota.github.io/api/panorama/events
 - Panorama framework: `references/panorama-framework.md`
 - Panorama API2: `references/panorama-api2.md`
 - Replica alignment rules: `references/replica-alignment-rules.md`
