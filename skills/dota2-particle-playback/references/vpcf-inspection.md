@@ -44,6 +44,11 @@ Look for these fields first:
 - `m_nCP1`, `m_nCP2`, and similar CP fields
 - `m_nFilterCP`
 - `m_nFirstMultipleOverride_BackwardCompat`
+- `C_OP_AttractToControlPoint`
+- `C_OP_MaxVelocity`
+- `C_OP_Orient2DRelToCP`
+- `C_OP_StopAfterCPDuration`
+- `C_OP_CPOffsetToPercentageBetweenCPs`
 
 Interpretation rules:
 
@@ -58,6 +63,10 @@ Interpretation rules:
 - For packed CP vectors, analyze `x`, `y`, and `z` independently. A single CP index can carry unrelated meanings across different components.
 - If the same CP component is consumed in multiple files, document the common meaning only after checking all of them.
 - If a component is never consumed explicitly, mark it as unknown instead of inferring a meaning from a nearby effect.
+- For projectile particles, determine whether the engine, the particle file, or Lua owns movement before choosing playback API.
+- `m_nOverrideCP` on velocity operators often means "read speed/velocity from this CP"; do not treat that CP as a destination unless another consumer proves it.
+- A destination CP consumed by attraction/path operators should usually be set once for particle-driven projectiles. Updating it every frame can make the effect lag, split, or snap.
+- Lifetime operators such as `C_OP_StopAfterCPDuration` can make long-distance tests fail even when the target CP is correct. Scale visual speed from distance when the projectile must arrive before the cutoff.
 
 Parse order that works well on real files:
 
@@ -75,6 +84,15 @@ Parse order that works well on real files:
    - runtime meaning
    - confidence
 8. Only after the table is complete, translate the result into runtime playback inputs.
+
+Projectile-specific parse order:
+
+1. Identify position/target consumers such as attract-to-CP, path, interpolation, or CP offset operators.
+2. Identify speed/velocity consumers such as max-velocity override, velocity random, movement basic, or parameter vectors.
+3. Identify orientation consumers such as `Orient2DRelToCP`.
+4. Identify lifetime cutoffs and emitter stop rules.
+5. Classify playback as engine-driven, particle-driven, or caller-driven.
+6. If classification is uncertain, validate with a small matrix before editing ability logic.
 
 Practical refinements:
 
@@ -95,6 +113,14 @@ Practical refinements:
 - When a child particle is referenced, do not treat the parent file's preview CP layout as the final runtime contract until the child files are checked.
 - When a packed CP drives multiple visual layers, consider a small runtime perturbation test only after the file tree has been mapped; use it to confirm uncertain axis meanings, not to replace file inspection.
 
+Projectile validation matrix:
+
+- Test at least three distances when the effect travels to a point.
+- If all distances stop at the same location, suspect fixed speed plus lifetime cutoff, not a wrong target.
+- Test with endcap disabled or visually separated so it cannot mask the projectile body.
+- For particle-driven projectiles, prefer a fixed visual duration and compute speed as `distance / duration` when the VPCF has a short cutoff.
+- Record whether each CP is set once at spawn, updated over time, or left to engine projectile APIs.
+
 ## Output checklist
 
 When reporting a result, include:
@@ -103,6 +129,9 @@ When reporting a result, include:
 - Whether the file is a wrapper or a leaf
 - The attach mode used
 - The CP indices that matter
+- The movement owner: engine-driven, particle-driven, or caller-driven
+- Whether each caller CP is set once or updated over time
+- Any lifetime cutoff and the resulting speed/duration rule
 - The fields that drove the decision
 - Any child particle files that had to be inspected
 - Any missing information that prevents exact parity
