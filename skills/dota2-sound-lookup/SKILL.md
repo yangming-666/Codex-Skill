@@ -30,7 +30,14 @@ Resolve a Dota 2 sound request into the exact sound event and underlying resourc
 - When scanning code, keep the API call and the resolved string argument together in the report.
 - Do not claim a sound mapping is complete until the event file and the resource file have both been checked when both exist.
 - In the `E:\PVE` project, use `tools/soundevent_finder_gui` for concrete Dota 2 event lookup. Its default VPK path is resolved from `E:\PVE\tools\soundevent_finder_gui` to `E:\SteamLibrary\steamapps\common\dota 2 beta\game\dota\pak01_dir.vpk`. If that path does not exist, pass the real absolute VPK path explicitly.
-- When copying a vanilla event into a local `.vsndevts`, copy the full matched event block parameters (`volume`, `pitch`, `soundlevel`, `mixgroup`, `spread_radius`, limiter/layer/block fields, `vsnd_files`, `vsnd_duration`) unless intentionally changing them.
+- When copying a vanilla event into a local `.vsndevts`, copy the full matched event block parameters (`volume`, `pitch`, `soundlevel`, `mixgroup`, `spread_radius`, `distance_max`, limiter/layer/block fields, `vsnd_files`, `vsnd_duration`), then apply documented project overrides.
+- In the `E:\PVE` project, reproduce the spatial-field normalization already used by the completed Shop1 soundevents:
+  - Apply the same threshold to both `spread_radius` and `distance_max`.
+  - For each field present in the source event, change its value to `4000` when the original value is strictly less than `2500`.
+  - Keep values of `2500` or greater unchanged unless the task explicitly requests different tuning.
+  - Evaluate the two fields separately when an event contains both.
+  - Use the field name `distance_max`, matching the existing `.vsndevts`; do not write `max_distance`.
+  - Evidence in commit `c0ce20ad2`: `spread_radius` values such as `300`, `600`, and `1500`, and `distance_max` values such as `1000`, `1500`, `2000`, and `2200`, were changed to `4000`.
 
 ## Tools
 

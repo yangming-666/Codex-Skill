@@ -1,10 +1,10 @@
 {
   "projectRoot": "D:\\analyse-game",
-  "generatedAtMs": 1783343383975,
+  "generatedAtMs": 1783669181034,
   "currentSuggestionIds": [
-    "f63359e5-1a25-47a4-875c-d909ad84ee0e",
-    "561e9d83-0daa-45cc-9c6e-5b12ed4d22c4",
-    "2bf00000-b7f6-488c-9cd2-fca3124120e6"
+    "3e348b1d-a799-4767-b649-e2fbfd0f0f42",
+    "fbe2d21e-78fd-4f8f-87bf-7c391a172fcb",
+    "a5a1ae86-96d4-4ed4-b359-094cb8869d78"
   ],
   "suggestions": [
     {
@@ -146,6 +146,146 @@
       "status": "pending",
       "createdAtMs": 1783343383975,
       "updatedAtMs": 1783343383975
+    },
+    {
+      "id": "c244fdca-e2a1-4fef-a0fc-dd7a6819adb2",
+      "title": "Dump behavior tree bodies for the top hero-skill gap clusters",
+      "description": "Your July 4 audit says scan coverage is complete but 145 exact behavior-tree gaps still remain in `复刻_强化`, concentrated on `10902`, `40820`, `13200`, `34800`, and `40200`. Have Codex extend the remaining-queue dump flow to capture full bodies for those IDs and refresh the HTML so the next pass closes real blockers instead of re-scanning IDs.",
+      "prompt": "Extend the hero-skill dump pipeline so it captures full behavior tree bodies for the highest-gap IDs from `outputs/hero_skill_enhance_update/pve_excel_gap_audit.json`, starting with `10902`, `40820`, `13200`, `34800`, and `40200`. Update the relevant Frida/parse scripts, regenerate the audit artifacts, and show which exact gap rows in the HTML/report are now closed.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783408545675,
+      "updatedAtMs": 1783408545675
+    },
+    {
+      "id": "53769d49-1396-4a7a-916f-c946e5b39848",
+      "title": "Fix the Windows adb reconnect path before the next dump run",
+      "description": "`pve_html_state_verification.md` ended with `adb restart` leaving no devices and refused connections on `127.0.0.1:7555/5557/16416`, which will break the next hero-skill capture loop. Codex can harden the Windows scripts now so the next runtime collection does not fail at device discovery.",
+      "prompt": "Patch the Windows live-dump workflow to recover cleanly when `adb restart` drops emulator connections. Inspect `tools/run_pve_remaining_queue_scan.ps1`, `tools/run_frida_agent.py`, and related helpers, add robust reconnect/retry handling for common localhost emulator ports, and document the new recovery behavior in the relevant README or script output.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783408545675,
+      "updatedAtMs": 1783408545675
+    },
+    {
+      "id": "27f72380-c7bb-4bc1-bed6-f33404f89a93",
+      "title": "补齐卡卡和骑士的缺行为树强化链",
+      "description": "7月4日生成的 `pve_excel_gap_audit` 里，`13200` 和 `33100` 仍是强化缺口最高的一档，但最近线程还没覆盖这两条链。Codex 可以直接顺着现有 dump 线索回填这两个英雄的强化说明，并重新产出 Excel/HTML。",
+      "prompt": "继续完善英雄技能强化配置，先只处理卡卡 `13200` 和骑士 `33100` 这两条强化链。请基于 `outputs/hero_skill_enhance_update/pve_excel_gap_audit.json`、现有 dump/源码线索，把缺失的行为树口径、时序和复刻说明补齐，更新对应工作簿/HTML，并明确哪些点已经闭环、哪些还需要运行时样本。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783485577251,
+      "updatedAtMs": 1783485577251
+    },
+    {
+      "id": "d999c4d0-32d4-40be-8f5a-55324544ae25",
+      "title": "补齐 810000 系墙攻和远程怪行为树真值",
+      "description": "7月6日的 `WALL_ATTACK_SKILL_GAP_AUDIT.md` 显示文档覆盖到了，但高频墙攻技能如 `810011/810015/810113/810028` 依然没有行为树真值。现在补这批，能直接减少后面怪物复刻反复查表的成本。",
+      "prompt": "按 `reports/gap_audit/WALL_ATTACK_SKILL_GAP_AUDIT.md` 的出现次数优先级，先补 `810000` 系墙攻和前几条高频远程怪技能的行为树真值。请整理一个最小采集清单，说明每个 skill 现在缺什么、已有什么证据、应该回填到哪些文档或表里，并尽量直接生成可回填内容。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783485577251,
+      "updatedAtMs": 1783485577251
+    },
+    {
+      "id": "18e99652-f8c5-4667-a9df-6b1d3b45edd0",
+      "title": "跑通一次 16509/16510 真实回包采样",
+      "description": "最近提交已经把 `stage_settlement_patcher`、运行时导出类和采集文档都补进来了，但失败结算公式仍卡在没有真实成对样本。现在只差把补丁 APK 签名安装并拿到第一份 `jsonl/logcat` 样本。",
+      "prompt": "把手游关卡结算的真实回包采样链先跑通一次。请基于 `reports/STAGE_SETTLEMENT_RUNTIME_CAPTURE.md`、`tools/stage_settlement_patcher/README.md` 和现有补丁产物，给出我这台机器上最短可执行路径：缺什么环境、怎么签名安装、怎么抓第一份 `16509/16510` 成对样本、抓到后怎么转成表格。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783485577251,
+      "updatedAtMs": 1783485577251
+    },
+    {
+      "id": "9202466d-5d6f-4649-8cb9-215350c54ca0",
+      "title": "Make the PVE queue scan survive emulator port drift again",
+      "description": "`pve_html_state_verification.md` from July 4 says adb restart left `127.0.0.1:7555/5557/16416` refused, and `tools/run_pve_remaining_queue_scan.ps1` still hard-codes `127.0.0.1:16416`. This is the clearest unblocker before the next runtime dump round.",
+      "prompt": "Harden `tools/run_pve_remaining_queue_scan.ps1` for the emulator reconnect problem shown in `outputs/hero_skill_enhance_update/pve_html_state_verification.md`. It currently assumes `127.0.0.1:16416`; make it probe/retry common local emulator serials, recover cleanly after `adb restart`, and update any related verification output so I can rerun the scan without hand-fixing the serial each time.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783504082074,
+      "updatedAtMs": 1783504082074
+    },
+    {
+      "id": "ef428e65-fb4f-4c5e-b9cb-7c0a98df57e2",
+      "title": "Retarget the remaining queue scan to the July 3 unanswered hero gaps",
+      "description": "Your July 3 thread asks are still live for 剑仙、哪吒、暴风、黑百合, and the latest gap audit still shows heavy exact behavior-tree holes around the same hero-skill cluster. The current Frida queue is a static ID list, so Codex can narrow it to the missing rows that actually matter now.",
+      "prompt": "Use `outputs/hero_skill_enhance_update/pve_excel_gap_audit.json`, the current HTML output, and the July 3 hero questions to rebuild the remaining-scan queue around the still-unresolved hero skills for 剑仙、哪吒、暴风、黑百合. Replace the hard-coded prioritization in `tools/frida/scan_pve_remaining_queue_agent.js` with a generated top-gap queue, and emit a small report showing which exact missing rows and skill IDs the next runtime dump is targeting.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783504082074,
+      "updatedAtMs": 1783504082074
+    },
+    {
+      "id": "3b2a49e1-9e19-4a91-8cc3-770c78f97945",
+      "title": "Reconnect MuMu ADB and finish the remaining 159 skill gaps",
+      "description": "`outputs/hero_skill_enhance_update/pve_html_state_verification.md` shows the last verification stopped at `no devices after adb restart`, while the July 4 audit still leaves 159 `复刻_缺口` rows. Codex can reconnect the emulator targets, rerun the remaining-queue scan, and push the new behavior-tree evidence back into the HTML and workbook.",
+      "prompt": "先把 MuMu 的 ADB 连上，重跑 hero_skill_enhance_update 的 remaining queue 扫描，把当前还剩的 159 条复刻缺口尽量回填掉；如果脚本或连接流程有问题，直接在这个仓库里修好并重新生成 HTML/审计结果。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783570783522,
+      "updatedAtMs": 1783570783522
+    },
+    {
+      "id": "f2f72160-fb81-48da-b94f-20f20db71657",
+      "title": "Regenerate 剑仙、哪吒、黑百合 rows from runtime evidence",
+      "description": "Your July 3 Codex thread asked for exact behavior on these heroes, and the current gap audit still lists 剑仙、哪吒、黑百合作为 unresolved main-skill examples. Codex can target just those rows, extract the missing timing/range/multiplier evidence from the existing pipeline, and regenerate cleaner final descriptions.",
+      "prompt": "针对 剑仙、哪吒、黑百合 这几条主技能配置，直接用仓库里现有的 advanced dump / gap audit 流程补证据并重写最终复刻说明，重点解决之前问过的穿透/反弹/额外伤害倍率/tick/爆炸范围这些未闭环点，然后重新产出对应的 HTML 内容。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783570783522,
+      "updatedAtMs": 1783570783522
+    },
+    {
+      "id": "cc9a33ff-b75d-4ad4-a6ef-f062aa7d63e7",
+      "title": "恢复 ADB 后补抓 13200/33100/34700/34800/40400 主链",
+      "description": "`2026-07-04` 的验证结果还停在 `adb_state: no devices`，而这 5 条主链正是最新 gap audit 里最集中的精确行为树缺口，直接卡住强化和图腾多行回填。让 Codex把这一轮捕获和结果刷新一并做完，能最快减少后续反复查表。",
+      "prompt": "恢复 ADB 可用后，按 2026-07-04 的 gap audit 先补抓 `13200`、`33100`、`34700`、`34800`、`40400` 这 5 条主链的行为树和运行时证据。请直接在这个项目里梳理现有脚本、准备最省事的一轮执行方案，必要时补批量命令，并在可运行后更新 `outputs/hero_skill_enhance_update` 下的 HTML 和 gap audit。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783589250025,
+      "updatedAtMs": 1783589250025
+    },
+    {
+      "id": "6ed6c19a-385e-49aa-aee9-83d9b61952c7",
+      "title": "把剑仙御剑术剩余结论补成可落地实现",
+      "description": "你在 `2026-07-03` 专门追问过剑仙御剑术的追踪、穿透和是否会一直存在；`2026-07-04` 生成的 HTML 已闭合核心规则，但 `skill_40200.lua` 仍未拿到，速度、延迟和帧级表现还是最后缺口。这个点补完后，剑仙这条主链基本就能定稿。",
+      "prompt": "继续处理剑仙 `40200 御剑术`。基于现有结论，把还缺的 `skill_40200.lua` 或运行时证据补齐，确认 `moveSpeed`、基础 `penetrateNum`、延迟、改目标规则和命中/销毁时序，然后回填到现有说明，并重刷 `outputs/hero_skill_enhance_update/英雄主技能配置机制复核_20260703.html`。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783589250025,
+      "updatedAtMs": 1783589250025
+    },
+    {
+      "id": "3e348b1d-a799-4767-b649-e2fbfd0f0f42",
+      "title": "Close the top July skill gaps for Sun Wukong, Sword Saint, and Kaka",
+      "description": "The July 4 gap audit still clusters on 40820, 34801, and 13200, and the current HTML explicitly leaves timing and movement frames unresolved. Codex can target just those three chains, harvest the missing runtime fields, and patch the existing replication HTML instead of reopening the whole workbook.",
+      "prompt": "基于 outputs/hero_skill_enhance_update/pve_excel_gap_audit.json 和 outputs/hero_skill_enhance_update/英雄主技能配置机制复核_20260703.html，优先补齐孙悟空 40820、剑圣 34801、卡卡 13200 这三条高频缺口。先梳理现有证据和缺的字段，再生成最小化的定向扫描方案；如果本地可跑就直接用现有 frida/scan 工具补速度、段间等待、落点/重选目标帧，并把结论回写到现有 HTML，只保留变化项。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783650890820,
+      "updatedAtMs": 1783650890820
+    },
+    {
+      "id": "fbe2d21e-78fd-4f8f-87bf-7c391a172fcb",
+      "title": "Finish Black Widow’s spider emperor branch from the still-missing Lua bodies",
+      "description": "Your July 3 Black Widow work closed the normal spider chain, but the current HTML still leaves 12806/12807/12810/12813 timing and repeat-hit behavior open. This is a clean follow-up Codex can drive end to end because the unresolved scope is already isolated.",
+      "prompt": "继续收口黑百合未闭合部分。以 outputs/hero_skill_enhance_update/英雄主技能配置机制复核_20260703.html 里黑百合相关条目为准，只处理蛛皇/毒刺链，针对 skill_12806、12807、12810、12813 缺的投放落点、发射间隔、飞行速度、同目标重复规则做定向补证；优先复用现有脚本和报告结构，最后直接更新同一份 HTML 的黑百合结论。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783650890820,
+      "updatedAtMs": 1783650890820
+    },
+    {
+      "id": "a5a1ae86-96d4-4ed4-b359-094cb8869d78",
+      "title": "Reconnect ADB and rerun the July 4 hero-skill verification chain",
+      "description": "The latest verification says coverage is clean, but it also records `no devices after adb restart`, so the live validation loop did not fully close. Codex can rerun the exact verification chain and give you a delta-only summary once the emulator is back.",
+      "prompt": "等 ADB 设备恢复后，按 outputs/hero_skill_enhance_update/pve_html_state_verification.md 这套链路重新跑一遍 hero skill 验证。复用现有 audit/verify 脚本，确认图腾覆盖、scan queue 覆盖和 HTML 状态都没有新增缺口；最后只输出和 2026-07-04 结果相比的变化项，并指出是否还有需要新 dump 的技能。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783650890820,
+      "updatedAtMs": 1783650890820
     }
   ]
 }

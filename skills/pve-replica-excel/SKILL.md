@@ -11,6 +11,11 @@ Treat the workbook as a replica implementation planning document, not a config d
 
 Write for someone implementing the skill behavior. Convert raw config into stable behavior contracts: trigger, target, range, timing, damage coefficient, tick cadence, duration, cooldown, caps, exclusions, and branch relationships.
 
+The primary unit of analysis is the individual skill mechanism, not a generic set of
+spreadsheet columns. Before writing a row, reconstruct that skill's complete behavior
+chain and define the concrete values required to reproduce every branch and state.
+Do not declare a skill replica complete merely because some standard fields are filled.
+
 Workbook cells should contain the final design contract, not the audit trail. Prefer positive implementation statements: what to trigger, what range to use, what numbers to apply, and how branches stack.
 
 ## Mobile PVE Concept Layers
@@ -29,6 +34,33 @@ Keep these layers separate before writing `复刻说明`:
 Before writing or updating an Excel row, identify the row's active scope: base main skill, display/skill-level summary, hero step-up or unlock layer, rogue/strengthening layer, special/ultimate layer, or runtime audit note.
 
 Only include effects that are active inside that row's scope. Current-row scope beats same-name aggregation: when several config entries share the same skill name, use the display level, passive/action, and runtime behavior that belong to the target row instead of combining every same-name level.
+
+## Per-Skill Replication Contract (mandatory)
+
+For each target skill or enhancement, first write an internal mechanism map. At minimum,
+map every state/branch in the chain and answer the applicable items below:
+
+- Entry and trigger condition, trigger probability, trigger count, and target filter.
+- State transitions and branch ownership, including whether a second enhancement starts
+  from the base state or from the first enhanced state.
+- Geometry/range changes: radius, width, length, area, target count, and range multiplier.
+- Presentation changes: model/effect scale, projectile size, animation variant, and any
+  separate visual-only scaling.
+- Damage changes: base coefficient, additive damage, final-damage modifier, damage type,
+  critical behavior, and whether the modifier applies once or per layer.
+- Timing: delay, interval, duration, tick count, reset/removal timing, and cooldown.
+- Stacking semantics: additive, multiplicative, replacement, capped, or mutually exclusive.
+
+Only mark an item `已确认` when a source directly supports the value and its scope.
+If the value is not found, record it as `缺失` or `仍需实机确认`; never infer a range or
+visual scale from a damage percentage, a probability modifier, a neighboring skill, or a
+summary sentence. A skill is not replica-complete while any implementation-critical item
+in its mechanism map remains unresolved.
+
+For multi-stage effects, explicitly calculate the effective result only after confirming
+the stacking rule. For example, independent sequential scale factors use `base × f1 × f2`
+only when the second stage is documented as modifying the already-expanded state; otherwise
+keep the relationship unresolved and do not choose between `base × f2` and `base × f1 × f2`.
 
 For a base main skill row, do not write concrete values from later step-up, rogue, totem, equipment, skin, co-op, ultimate, or other strengthening layers. If a later layer matters for implementation, mention only that it is configured in its own unlock/strengthening layer, without copying its numbers into the base row.
 
@@ -113,12 +145,35 @@ Use these sources in order:
 2. Locate the target row by hero and skill/enhancement name.
 3. Read current values in the target row.
 4. Read 5-10 nearby or analogous rows to match length, section names, and conclusion style.
-5. Gather only the source rows needed for the requested mechanism.
-6. Write concise replica prose using the required output voice.
-7. Put hard confirmed values in `复刻说明`; put residual uncertainty in `复核结论`.
-8. Compare the edited row against analogous rows before saving.
-9. Inspect the edited range and scan for formula errors.
-10. Render the edited range if the workbook tool supports it.
+5. Build the per-skill replication contract before drafting prose; enumerate every state,
+   branch, and implementation-critical parameter required by that skill.
+6. Gather sources for each contract item, not merely for the columns already present in
+   the workbook. Cross-check `SkillData`, `BuffData`, `PassiveData`, `LevelEventData`,
+   behavior trees, and runtime evidence according to source priority.
+7. Resolve and document stacking/ownership relationships before calculating effective
+   values. Keep separate fields for damage, geometry/range, and presentation scale.
+8. Write concise replica prose using the required output voice. Put confirmed values in
+   `复刻说明`; put every unresolved implementation-critical item in `复核结论`.
+9. Run the completeness gate below. A row with an unresolved critical contract item must
+   fail the replica check, even when its existing cells are populated and well formatted.
+10. Compare the edited row against analogous rows before saving.
+11. Inspect the edited range and scan for formula errors.
+12. Render the edited range if the workbook tool supports it.
+
+## Completeness Gate (mandatory)
+
+Before passing a skill, produce an internal checklist with one line per mechanism state
+and parameter. The check must fail if any of the following is absent, conflated, or only
+inferred:
+
+- Every named state/branch has a trigger, owner, target, and transition relationship.
+- Every branch has its required damage, geometry/range, and presentation values separated.
+- Every multiplier has a defined reference base and unit (`+30%`, `1.3×`, or a coefficient).
+- Every multi-stage modifier has an evidence-backed stacking rule.
+- Every missing value is visible in `复核结论` as `缺失：...` or `仍需实机确认：...`.
+
+`无确认缺失` is permitted only after this checklist is fully closed. Do not use a
+generic “fields present” or “row formatted” result as evidence of replica completeness.
 
 ## Avoid
 

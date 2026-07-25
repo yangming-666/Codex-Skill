@@ -19,11 +19,15 @@ description: Inspect Dota 2 particle `.vpcf` files and determine the correct pla
 6. Preserve confirmed test facts from the current investigation; remove confirmed-bad candidates from further test exposure.
 7. Inspect the file before writing code that plays the particle.
 8. Map the file structure to runtime playback.
-9. Report the particle path, attach mode, CP component meanings, movement owner, and timing limits that were actually consumed by the file tree.
+9. Trace the root particle into the project's runtime precache path and add it through the repository-sanctioned ability, unit, or resource-maintenance mechanism.
+10. Verify precache coverage, then report the particle path, attach mode, CP component meanings, movement owner, timing limits, and precache entry that were actually consumed.
 
 ## Rules
 
 - Inspect the real `.vpcf` first whenever playback, reconstruction, or CP setup matters.
+- Treat precache integration as part of particle playback, not as optional follow-up. Do not assume a Lua constant, `CreateParticle` call, or an inspected vanilla file is automatically available at runtime.
+- Read the repository's precache documentation before choosing where to declare the particle. Prefer the narrowest owning ability/unit mechanism and use the project's maintenance or verification tool when available; do not place ability-specific particles in a global static list by default.
+- Precache the root VPCF used by the caller. Let its compiled child-resource dependencies load through the root unless the repository or runtime evidence requires explicit child entries.
 - Treat `m_Children` as a strong signal that the root file is a wrapper and must be expanded before judging runtime behavior.
 - Once a wrapper is detected, do not finalize playback from the root file alone; recursively inspect child particles until the active runtime tree is covered.
 - Read `m_controlPointConfigurations` for declared CP layout, then scan emitters, operators, initializers, and renderers for `m_nControlPoint`, `m_iControlPoint`, `m_nFilterCP`, `m_nCPInput`, and `m_iAttachType`.
