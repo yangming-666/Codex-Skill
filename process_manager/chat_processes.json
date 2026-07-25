@@ -1,6 +1,45 @@
 [
   {
     "chatTitle": null,
+    "command": "rg -n \"剑仙|哪吒|暴风|黑百合|毒液|大招|权重\" -S outputs reports tools README.md",
+    "conversationId": "019f49dd-c932-7293-af2c-3524ee4d6a33",
+    "cwd": "D:\\analyse-game",
+    "id": "019f49dd-c932-7293-af2c-3524ee4d6a33:019f49dd-d413-7220-99c0-eb3626bf92db:call_qz3XZDlXVz71SwqYOGUKN98W",
+    "itemId": "call_qz3XZDlXVz71SwqYOGUKN98W",
+    "osPid": null,
+    "processId": null,
+    "startedAtMs": 1783650832828,
+    "turnId": "019f49dd-d413-7220-99c0-eb3626bf92db",
+    "updatedAtMs": 1783650832830
+  },
+  {
+    "chatTitle": null,
+    "command": "Get-Content outputs\\\\hero_skill_enhance_update\\\\pve_totem_html_coverage.json -TotalCount 260",
+    "conversationId": "019f49dd-c932-7293-af2c-3524ee4d6a33",
+    "cwd": "D:\\analyse-game",
+    "id": "019f49dd-c932-7293-af2c-3524ee4d6a33:019f49dd-d413-7220-99c0-eb3626bf92db:call_bnTBjZpIJ1FqtonAcYz1mYDh",
+    "itemId": "call_bnTBjZpIJ1FqtonAcYz1mYDh",
+    "osPid": null,
+    "processId": null,
+    "startedAtMs": 1783650832815,
+    "turnId": "019f49dd-d413-7220-99c0-eb3626bf92db",
+    "updatedAtMs": 1783650832816
+  },
+  {
+    "chatTitle": null,
+    "command": "Get-Content outputs\\\\hero_skill_enhance_update\\\\pve_scan_queue_coverage.json -TotalCount 260",
+    "conversationId": "019f49dd-c932-7293-af2c-3524ee4d6a33",
+    "cwd": "D:\\analyse-game",
+    "id": "019f49dd-c932-7293-af2c-3524ee4d6a33:019f49dd-d413-7220-99c0-eb3626bf92db:call_81Tn98jvduAIQIPbIXfbJvSO",
+    "itemId": "call_81Tn98jvduAIQIPbIXfbJvSO",
+    "osPid": null,
+    "processId": null,
+    "startedAtMs": 1783650832662,
+    "turnId": "019f49dd-d413-7220-99c0-eb3626bf92db",
+    "updatedAtMs": 1783650832665
+  },
+  {
+    "chatTitle": null,
     "command": "Get-ChildItem reports -Recurse -Filter 'skill_402*.lua' | Select-Object FullName,Length",
     "conversationId": "019f2823-38d9-7521-8176-db0f8420bee5",
     "cwd": "D:\\analyse-game",

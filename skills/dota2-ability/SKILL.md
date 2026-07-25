@@ -66,9 +66,16 @@ Quick lookup commands (PowerShell, portable):
 - If the visual reference cannot be found or inspected, explicitly say visual parity cannot be guaranteed yet.
 
 4) Implement KV + Lua
+- Random projectile directions must reuse the project's common playable-battlefield boundary implementation, including the actual player wall line as the rear boundary; obstacle/wall AABBs are not substitutes for the playable battlefield frame. Derive the complete legal angle intervals analytically from the actual launch position, projectile radius, maximum distance, and required boundary-distance ratio, then sample once inside those intervals; do not use rejection sampling or assume a permanently forbidden world/grid direction. If no common implementation exists, add and verify one first, and never duplicate battlefield-boundary logic inside an individual ability.
 - KV numbers stay in KV when possible.
 - Lua handles behavior, sequencing, targeting, and complex projectile logic.
 - Place/modify scripts according to project layout and existing patterns.
+
+5) Integrate and verify runtime resources
+- Enumerate every particle, model, soundevent file, and other runtime asset newly referenced by the ability change.
+- Read the repository's precache documentation and identify the sanctioned entry point before declaring implementation complete. Do not assume a Lua string literal or `ParticleManager:CreateParticle` call is automatically precached.
+- Add each new asset through the narrowest existing mechanism, such as the owning ability/unit `precache` block or the project's resource-maintenance tool. Do not add hero- or ability-specific assets to a global static list unless repository policy explicitly requires it.
+- Run the project's precache verification or maintenance command when it is safe for the current worktree. If the target file has unrelated user changes or the command rewrites broader scope, make the smallest source edit and report the deferred command instead.
 
 ## Guidance
 
@@ -101,6 +108,7 @@ When converting a vanilla ability to Lua, replicate baseline presentation unless
 4) Verification checklist (must report)
 - Confirm no engine-side vanilla cast path was used (`ExecuteOrderFromTable`/`OnSpellStart` for vanilla ability playback).
 - Confirm which vanilla KV fields were mapped.
+- Confirm every newly introduced particle, model, and soundevent file is covered by the repository's runtime precache path.
 - Any intentional deviations from vanilla and why.
 
 5) Full-replication claim guardrail

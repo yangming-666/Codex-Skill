@@ -4,6 +4,46 @@
     {
       "schemaVersion": 2,
       "appServerProtocolVersion": 2,
+      "appVersion": "26.707.91948",
+      "channel": "prod",
+      "cliVersion": "26.707.91948",
+      "entryId": "codex-runtime-1a11a4c11cc05f62b645160e26589e68",
+      "extensionBuildChannels": [
+        "prod"
+      ],
+      "extensionIds": [
+        "hehggadaopoacecdllhhajmbjkdcmajg"
+      ],
+      "installId": "codex-install-186769b9c11a90386b144cbcfe36a33f",
+      "nativeHostNames": [
+        "com.openai.codexextension"
+      ],
+      "nativeHostProtocolVersion": 2,
+      "nativeHostVersion": "26.707.91948",
+      "paths": {
+        "browserClientPath": "C:\\Users\\ym199\\.codex\\plugins\\cache\\openai-bundled\\chrome\\latest\\scripts\\browser-client.mjs",
+        "codexCliPath": "C:\\Users\\ym199\\.codex\\plugins\\.plugin-appserver\\codex.exe",
+        "codexHome": "C:\\Users\\ym199\\.codex",
+        "extensionHostPath": "C:\\Users\\ym199\\.codex\\plugins\\cache\\openai-bundled\\chrome\\latest\\extension-host\\windows\\x64\\extension-host.exe",
+        "nodePath": "C:\\Users\\ym199\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\03b1cdac8af3a530\\bin\\node.exe",
+        "nodeModuleDirs": [
+          "C:\\Users\\ym199\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\03b1cdac8af3a530\\bin\\node_modules"
+        ],
+        "nodeReplPath": "C:\\Users\\ym199\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\03b1cdac8af3a530\\bin\\node_repl.exe",
+        "resourcesPath": "C:\\Program Files\\WindowsApps\\OpenAI.Codex_26.707.12708.0_x64__2p2nqsd0c76g0\\app\\resources"
+      },
+      "presence": {
+        "lastSeenAt": "2026-07-16T08:04:52.543Z",
+        "pid": 19936,
+        "startedAt": "2026-07-16T08:04:52.543Z"
+      },
+      "proxyHost": "127.0.0.1",
+      "proxyPort": 0,
+      "updatedAt": "2026-07-16T08:04:52.543Z"
+    },
+    {
+      "schemaVersion": 2,
+      "appServerProtocolVersion": 2,
       "appVersion": "26.623.81905",
       "channel": "prod",
       "cliVersion": "26.623.81905",
@@ -44,6 +84,46 @@
     {
       "schemaVersion": 2,
       "appServerProtocolVersion": 2,
+      "appVersion": "26.707.31428",
+      "channel": "prod",
+      "cliVersion": "26.707.31428",
+      "entryId": "codex-runtime-1dde822b52883f60ee27755c8386a50c",
+      "extensionBuildChannels": [
+        "prod"
+      ],
+      "extensionIds": [
+        "hehggadaopoacecdllhhajmbjkdcmajg"
+      ],
+      "installId": "codex-install-ae3698a816875d2de8bd12eacce2a0d2",
+      "nativeHostNames": [
+        "com.openai.codexextension"
+      ],
+      "nativeHostProtocolVersion": 2,
+      "nativeHostVersion": "26.707.31428",
+      "paths": {
+        "browserClientPath": "C:\\Users\\ym199\\.codex\\plugins\\cache\\openai-bundled\\chrome\\latest\\scripts\\browser-client.mjs",
+        "codexCliPath": "C:\\Users\\ym199\\.codex\\plugins\\.plugin-appserver\\codex.exe",
+        "codexHome": "C:\\Users\\ym199\\.codex",
+        "extensionHostPath": "C:\\Users\\ym199\\.codex\\plugins\\cache\\openai-bundled\\chrome\\latest\\extension-host\\windows\\x64\\extension-host.exe",
+        "nodePath": "C:\\Users\\ym199\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\ecfc0d9aa02807e3\\bin\\node.exe",
+        "nodeModuleDirs": [
+          "C:\\Users\\ym199\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\ecfc0d9aa02807e3\\bin\\node_modules"
+        ],
+        "nodeReplPath": "C:\\Users\\ym199\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\ecfc0d9aa02807e3\\bin\\node_repl.exe",
+        "resourcesPath": "C:\\Program Files\\WindowsApps\\OpenAI.Codex_26.707.3748.0_x64__2p2nqsd0c76g0\\app\\resources"
+      },
+      "presence": {
+        "lastSeenAt": "2026-07-10T02:36:06.121Z",
+        "pid": 49540,
+        "startedAt": "2026-07-10T02:36:06.121Z"
+      },
+      "proxyHost": "127.0.0.1",
+      "proxyPort": 0,
+      "updatedAt": "2026-07-10T02:36:06.121Z"
+    },
+    {
+      "schemaVersion": 2,
+      "appServerProtocolVersion": 2,
       "appVersion": "26.623.101652",
       "channel": "prod",
       "cliVersion": "26.623.101652",
@@ -80,6 +160,46 @@
       "proxyHost": "127.0.0.1",
       "proxyPort": 0,
       "updatedAt": "2026-07-03T12:10:18.486Z"
+    },
+    {
+      "schemaVersion": 2,
+      "appServerProtocolVersion": 2,
+      "appVersion": "26.715.70719",
+      "channel": "prod",
+      "cliVersion": "26.715.70719",
+      "entryId": "codex-runtime-8a9242a866310751b5e914391cd524bf",
+      "extensionBuildChannels": [
+        "prod"
+      ],
+      "extensionIds": [
+        "hehggadaopoacecdllhhajmbjkdcmajg"
+      ],
+      "installId": "codex-install-8c0ac4e84f99321ff00e32749e30c603",
+      "nativeHostNames": [
+        "com.openai.codexextension"
+      ],
+      "nativeHostProtocolVersion": 2,
+      "nativeHostVersion": "26.715.70719",
+      "paths": {
+        "browserClientPath": "C:\\Users\\ym199\\.codex\\plugins\\cache\\openai-bundled\\chrome\\latest\\scripts\\browser-client.mjs",
+        "codexCliPath": "C:\\Users\\ym199\\.codex\\plugins\\.plugin-appserver\\codex.exe",
+        "codexHome": "C:\\Users\\ym199\\.codex",
+        "extensionHostPath": "C:\\Users\\ym199\\.codex\\plugins\\cache\\openai-bundled\\chrome\\latest\\extension-host\\windows\\x64\\extension-host.exe",
+        "nodePath": "C:\\Users\\ym199\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\03b1cdac8af3a530\\bin\\node.exe",
+        "nodeModuleDirs": [
+          "C:\\Users\\ym199\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\03b1cdac8af3a530\\bin\\node_modules"
+        ],
+        "nodeReplPath": "C:\\Users\\ym199\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\03b1cdac8af3a530\\bin\\node_repl.exe",
+        "resourcesPath": "C:\\Program Files\\WindowsApps\\OpenAI.Codex_26.715.9079.0_x64__2p2nqsd0c76g0\\app\\resources"
+      },
+      "presence": {
+        "lastSeenAt": "2026-07-22T05:41:12.022Z",
+        "pid": 4140,
+        "startedAt": "2026-07-22T05:41:12.022Z"
+      },
+      "proxyHost": "127.0.0.1",
+      "proxyPort": 0,
+      "updatedAt": "2026-07-22T05:41:12.022Z"
     },
     {
       "schemaVersion": 2,

@@ -1,0 +1,7 @@
+interface:
+  display_name: "游戏数值表设计"
+  short_description: "重建游戏数值机制并设计可验证的专业Excel结构"
+  default_prompt: "使用 $analyze-excel-data-structure 从权威数据重建数值机制、验证证据与推测，再决定并制作最优Excel结构。"
+
+policy:
+  allow_implicit_invocation: true

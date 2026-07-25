@@ -1,0 +1,37 @@
+{
+  "projectRoot": "D:\\BatchSignUp",
+  "generatedAtMs": 1784788616249,
+  "currentSuggestionIds": [],
+  "suggestions": [
+    {
+      "id": "ea6c54e0-8027-49e2-b1d6-7a93f3644676",
+      "title": "Make pytest use a repo-local temp dir for today’s task1 rerun",
+      "description": "`TASK1_AUTOMATION_AUDIT.md` says the hardened task1 flow still needs a final `pytest` rerun, but in this workspace `python -m pytest -q` currently dies before collection because Windows has no usable temp directory. Codex can fix that locally in the repo and rerun the suite.",
+      "prompt": "Fix this repo so `python -m pytest -q` can run inside `D:\\BatchSignUp` even when the machine temp directories are unavailable, then rerun the tests and keep the solution local to the project.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783672961202,
+      "updatedAtMs": 1783672961202
+    },
+    {
+      "id": "d564326f-fd27-4150-bd8b-5f25411fa25f",
+      "title": "Migrate old K-column Graph credentials into real Outlook forwarding rules",
+      "description": "Today’s docs mark Microsoft Graph as legacy, while the new function3 flow treats any non-empty K column as already done. That can strand rows with old `graph:...` values, so Codex should add a migration or requeue path before those accounts silently stop getting real forwarding rules.",
+      "prompt": "Add a migration/backfill path for legacy `graph:` values in Feishu column K so the new `forward_rule` flow does not skip rows that still need actual Outlook forwarding rules; update the worker, UI copy, and docs together.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783672961202,
+      "updatedAtMs": 1783672961202
+    },
+    {
+      "id": "6b8e82ce-30d3-4255-8e16-e35d905bd12c",
+      "title": "Show the saved Dota recovery screenshot in the manual-action panel",
+      "description": "Today’s Dota hardening added screenshot capture for blocked/manual-recovery states, but the Web UI still only shows text while waiting for human input. Surfacing the latest captured image in the existing manual-action panel would make those pauses much faster to resolve.",
+      "prompt": "Wire the latest saved manual-recovery screenshot into `steam_web_ui.py` so when Dota or Microsoft automation pauses for human help, the operator can see the captured image directly in the Web UI.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1783672961202,
+      "updatedAtMs": 1783672961202
+    }
+  ]
+}
