@@ -1,87 +1,82 @@
 ---
 name: dota2-particle-playback
-description: Inspect Dota 2 particle `.vpcf` files and determine the correct playback attach, control points, and timing before writing Lua or KV that plays effects. Use when a task involves playing, recreating, modifying, or debugging Dota 2 particles and you need to inspect the actual particle file first.
+description: Identify and play Dota 2 particles correctly by using current `server.dll` evidence for vanilla ability resource selection and real `.vpcf` files for attach, control-point, movement, lifetime, child, and precache contracts. Use for particle playback, recreation, modification, or debugging; avoid filename guessing and unnecessary full-family scans.
 ---
 
 # Dota 2 Particle Playback
 
-## Environment
+## Evidence Boundary
 
-- **Dota 2 Content Root**: `E:\SteamLibrary\steamapps\common\dota 2 beta\content\dota` (derived from `$env:DOTA2_VANILLA_CONTENT_ROOT`)
+Use each source only for what it proves:
+
+- Current `server.dll`: which resources a native ability references.
+- Current VPCF tree: attach drivers, CP consumers, movement operators, emitters, lifetime, and children.
+- Current Lua/native call evidence: caller-provided attach mode, CP values, API choice, and cleanup.
+- Runtime test: residual ambiguity and visual parity.
+
+DLL strings do not prove playback parameters. VPCF preview drivers do not necessarily prove caller inputs.
 
 ## Workflow
 
-1. Resolve the Dota 2 content root.
-2. Find the exact `.vpcf` file for the particle path.
-3. Parse the file in this order: wrapper, control-point contract, attach bindings, timing/lifetime, child files.
-4. Build a control-point consumer table before assigning any semantic meaning to a CP component.
-5. For projectile-like particles, classify the movement contract before choosing `CreateTrackingProjectile`, manual `ParticleManager`, or timer-driven CP updates.
-6. Preserve confirmed test facts from the current investigation; remove confirmed-bad candidates from further test exposure.
-7. Inspect the file before writing code that plays the particle.
-8. Map the file structure to runtime playback.
-9. Trace the root particle into the project's runtime precache path and add it through the repository-sanctioned ability, unit, or resource-maintenance mechanism.
-10. Verify precache coverage, then report the particle path, attach mode, CP component meanings, movement owner, timing limits, and precache entry that were actually consumed.
+1. Resolve the current Dota content root from `DOTA2_CONTENT_ROOT` or `DOTA2_VANILLA_CONTENT_ROOT`, then detected Steam installs.
+2. Select the exact root particle:
+   - For a vanilla native ability with an unknown or disputed particle, use the `$dota2-ability` DLL workflow and `scripts\inspect-server-ability-resources.ps1`.
+   - For a known custom/root path, skip DLL extraction.
+   - Do not guess from filenames or scan an entire hero particle directory when DLL/current caller evidence identifies the resource.
+3. Open the exact root VPCF. Follow only child branches that consume caller CPs, own movement/lifetime, or materially contribute the requested visual. Do not recursively dump unrelated visual leaves.
+4. Establish the caller contract:
+   - Prefer a current known-good caller or native-call evidence for attach mode and CP values.
+   - Verify those values against actual VPCF consumers.
+   - Separate caller inputs from internally generated CPs.
+5. For projectile-like effects, classify movement as engine-driven, particle-driven, or caller-driven before choosing `CreateTrackingProjectile`, manual `ParticleManager`, or timer updates.
+6. Check emit duration, particle lifetime, decay, stop operators, endcaps, and cleanup.
+7. Precache the root VPCF through the repository-sanctioned narrowest owner.
+8. Run focused runtime tests only for unresolved parameters. Preserve confirmed-good facts and stop retesting confirmed-bad candidates.
 
-## Rules
+## Analysis Depth
 
-- Inspect the real `.vpcf` first whenever playback, reconstruction, or CP setup matters.
-- Treat precache integration as part of particle playback, not as optional follow-up. Do not assume a Lua constant, `CreateParticle` call, or an inspected vanilla file is automatically available at runtime.
-- Read the repository's precache documentation before choosing where to declare the particle. Prefer the narrowest owning ability/unit mechanism and use the project's maintenance or verification tool when available; do not place ability-specific particles in a global static list by default.
-- Precache the root VPCF used by the caller. Let its compiled child-resource dependencies load through the root unless the repository or runtime evidence requires explicit child entries.
-- Treat `m_Children` as a strong signal that the root file is a wrapper and must be expanded before judging runtime behavior.
-- Once a wrapper is detected, do not finalize playback from the root file alone; recursively inspect child particles until the active runtime tree is covered.
-- Read `m_controlPointConfigurations` for declared CP layout, then scan emitters, operators, initializers, and renderers for `m_nControlPoint`, `m_iControlPoint`, `m_nFilterCP`, `m_nCPInput`, and `m_iAttachType`.
-- For every CP index, identify each consumer of `x`, `y`, and `z` separately before naming the runtime meaning of that component.
-- Do not label a CP component as "radius", "duration", "speed", or similar until you can point to the exact operators/initializers/child files that consume that component.
-- If a component has multiple consumers, prefer the intersection of all observed consumers over any single file's apparent intent.
-- Follow child particle references before finalizing playback rules.
-- If a particle uses one CP as a packed parameter vector, treat each vector component as an independent contract and document the consumers for each axis.
-- Never infer CP meaning from its index. CP1 can be a target point, orientation point, speed override, packed scalar vector, or direction input depending on the operators that consume it.
-- For projectile-like particles, explicitly identify the movement owner:
-  - `engine-driven` when Dota projectile APIs are expected to move the particle and feed standard CPs.
-  - `particle-driven` when operators such as attraction, velocity, max-velocity override, path, or CP interpolation move particles inside the VPCF.
-  - `caller-driven` when Lua must update one or more CPs over time.
-- For particle-driven projectiles, identify target CPs, velocity/speed override CPs, orientation CPs, and lifetime cutoff before writing Lua.
-- Treat `C_OP_MaxVelocity` with `m_nOverrideCP` as a possible speed/velocity parameter, not as a target, until confirmed by consumers or runtime testing.
-- If the file contains `C_OP_StopAfterCPDuration`, `C_OP_Decay`, finite emit duration, or short particle lifetime, make playback speed/duration lifetime-aware; fixed speed across different distances can stop at the same world position.
-- Do not update an attractor or destination CP every frame unless the VPCF contract says the caller owns movement. For particle-driven projectiles, set destination/parameter CPs once and let the particle simulate.
-- Use `CreateTrackingProjectile` only after confirming the VPCF matches the engine projectile CP contract. Non-standard contracts, such as separate target and speed CPs, usually need manual `ParticleManager` setup.
-- Suppress or separate endcaps while validating projectile body movement; endcaps can hide that the body stopped early or teleported.
-- For ambiguous projectile VPCFs, run a distance sweep and parameter matrix before finalizing:
-  - short, medium, and long target distances
-  - destination CP set once vs updated over time
-  - speed CP as `Vector(speed, 0, 0)` vs target/world values when consumers are unclear
-  - visual duration derived from distance when lifetime limits exist
-- If the file cannot be found or inspected, say visual parity cannot be guaranteed yet.
-- Keep a live list of confirmed-good and confirmed-bad playback attempts during debugging. Do not reintroduce confirmed-bad attempts into test mode or production candidates unless the user explicitly asks to compare them again.
-- When a wrapper and a visual child both consume the same CP for different meanings, treat it as a real CP conflict, not a tuning issue. Example pattern: root movement consumes `CP1` as velocity while child spin consumes `CP1.x` as radius. Prefer a small custom wrapper that remaps one role to an unused CP over forcing one CP to satisfy both roles.
-- If a custom wrapper is needed, keep the proven visual leaf contract unchanged and only remap the conflicting root-side operator. Remove duplicate root renderers only when the child is the intended visual disc and the root renderer is causing a second model.
-- Avoid per-frame Lua `SetParticleControl` motion as a final solution when the particle can move via its own velocity, target, or path operators. Per-frame control updates are acceptable for exploration but often appear choppy compared with particle-system motion.
-- Separate "external playback inputs" from "internal derived inputs":
-  - External inputs are the CPs the caller should set from Lua/KV after `CreateParticle`.
-  - Internal derived inputs are CPs only consumed or re-emitted inside the particle tree and should not be guessed as mandatory caller inputs unless the tree proves it.
-- Do not set HSV/tint CPs by guessing. First identify whether each CP is caller input, visual-leaf input, or generated by an operator such as `C_OP_HSVShiftToCP`.
-- Do not remove vanilla HSV/pre-emission operators just because color is wrong. Prefer restoring the correct input CP values and letting internal generated CPs be produced by the particle.
-- If a particle has a known-good visual-only child setup, copy its CP contract exactly when embedding it through wrappers. A wrapper's preview defaults may differ from the child contract and can produce white/grey visuals.
-- When a CP is consumed by a child particle, record whether that child is a visual leaf, a helper layer, or an endcap. Do not elevate a helper-only CP to a root-level requirement without evidence from the full tree.
-- Assign a confidence label to each CP meaning:
-  - `direct` when the file explicitly binds the component.
-  - `inferred` when the meaning comes from multiple consumers or child propagation.
-  - `low-confidence` when the meaning is only weakly implied by one branch.
+Use the lightest analysis that establishes correctness:
 
-## Case Notes
+- Simple one-shot with a proven caller: verify the root, relevant CP consumers, lifetime, and precache. No full CP table.
+- Follow/buff particle: verify attachment drivers, caller CPs, endcap behavior, and cleanup.
+- Projectile or moving particle: verify movement owner, destination/speed/orientation CPs, and cutoff.
+- Packed, conflicting, or undocumented CPs: build a per-component consumer table and assign confidence.
 
-### Shredder Chakram
+Never infer CP meaning from its index or filename.
 
-Confirmed playback lessons from `shredder_chakram`:
+## Playback Rules
 
-- The full disc visual comes from the spin visual contract: set `CP1 = Vector(radius, 0, 0)`, `CP3 = position + Vector(0, 0, 75)`, and orient `CP3` to the travel/stay facing.
-- For the spin edge color, preserve the spin-only inputs: `CP15 = Vector(50, 255, 50)`, `CP16 = Vector(0, 0, 0)`, `CP60 = Vector(50, 255, 50)`, `CP61 = Vector(0, 0, 0)`.
-- Do not manually set `CP62` for this effect. It is produced by the wrapper's `C_OP_HSVShiftToCP` path and consumed by the spin renderer as HSV shift.
-- The vanilla launch wrapper cannot directly use `CP1` for both root velocity and child radius in custom manual playback. Use a custom launch wrapper that changes root `C_INIT_VelocityFromCP` to `CP2`, then set `CP2 = forward * speed`.
-- Do not overlay an extra spin particle on top of a wrapper that already includes the spin child; that creates doubled discs.
-- Do not use `ProjectileManager` directly with `shredder_chakram_spin.vpcf` for launch/return, because it does not provide the spin particle's required `CP1`/`CP3` contract during movement.
+- Treat `m_Children` as a wrapper signal, but inspect only relevant active branches.
+- Treat `m_nOverrideCP` as an input reference whose meaning must be proven by its operator and caller.
+- Set particle-driven destinations once unless the contract explicitly makes Lua the movement owner.
+- Avoid per-frame Lua motion when the VPCF or projectile engine owns movement.
+- Do not use `CreateTrackingProjectile` for a nonstandard manual CP contract.
+- Do not guess HSV/tint CPs or overwrite internally derived CPs.
+- If root and child consume the same CP component incompatibly, use a minimal wrapper/remap instead of forcing one value to satisfy both.
+- Suppress or separate endcaps only when they obscure movement diagnosis.
+- Precache the caller's root VPCF; do not list every child unless project/runtime evidence requires it.
 
-## Reference
+## Validation
 
-See [vpcf-inspection.md](references/vpcf-inspection.md) for the file-resolution order, parse order, common keywords, and the output checklist.
+For ambiguous moving effects, test the smallest matrix that distinguishes the remaining hypotheses:
+
+- short and long distance;
+- destination set once versus caller-updated, only if ownership is unclear;
+- candidate packed-CP values supported by actual consumers;
+- lifetime-derived speed/duration when a cutoff exists.
+
+Do not run a broad parameter sweep after native-call and VPCF evidence already agree.
+
+## Report
+
+Report only consumed evidence:
+
+- exact root VPCF and relevant children;
+- why the particle belongs to the target ability;
+- attach mode and caller CPs;
+- movement owner and update policy;
+- lifetime/cleanup;
+- precache entry;
+- remaining uncertainty and focused test, if any.
+
+See `references/vpcf-inspection.md` for field-level inspection and portable root resolution.

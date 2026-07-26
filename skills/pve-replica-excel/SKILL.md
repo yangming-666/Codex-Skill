@@ -1,6 +1,6 @@
 ---
 name: pve-replica-excel
-description: Update PVE hero skill configuration Excel workbooks in implementation-ready replica planning style. Use when editing 英雄技能强化配置.xlsx or similar PVE考据 sheets that must turn game config, buffs, passives, and behavior trees into concise策划复刻说明 rather than raw dumps.
+description: Update existing PVE hero skill configuration Excel workbooks in implementation-ready replica planning style. Use when target rows and workbook structure already exist and the task is to turn game config, buffs, passives, behavior trees, or mobile unpack evidence into concise production rules, values, evidence, and复刻说明. Use analyze-excel-data-structure instead when the primary task is inferring data relationships, designing workbook structure, completing broad missing datasets, or auditing economy/curve integrity.
 ---
 
 # PVE Replica Excel
@@ -17,6 +17,10 @@ chain and define the concrete values required to reproduce every branch and stat
 Do not declare a skill replica complete merely because some standard fields are filled.
 
 Workbook cells should contain the final design contract, not the audit trail. Prefer positive implementation statements: what to trigger, what range to use, what numbers to apply, and how branches stack.
+
+When the sheet separates `程序复刻规则`, `数值`, and `证据`, read
+`references/mobile-replica-columns.md` and keep those logical roles separate. Preserve
+the workbook's existing physical columns unless the user explicitly requests a restructure.
 
 ## Mobile PVE Concept Layers
 

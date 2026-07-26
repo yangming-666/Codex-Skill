@@ -1,62 +1,41 @@
-# Sound Workflow
+# Sound workflow
 
-Use this reference when a Dota 2 task needs the exact sound event name or the underlying sound resource.
+## Resolve the archive
 
-## Known archive path
+Use this order:
 
-The known Dota 2 archive for this workspace is:
-
-`E:\SteamLibrary\steamapps\common\dota 2 beta\game\dota\pak01_dir.vpk`
-
-If that path is not available, resolve it in this order:
-
-1. `DOTA2_VPK_PATH`
-2. A detected Steam install ending in `dota 2 beta/game/dota/pak01_dir.vpk`
-3. Ask the user for the VPK path
+1. Explicit `--vpk-path` or tool parameter.
+2. Workspace `tools/resolve_project_paths.ps1` result `pak01_vpk`.
+3. `DOTA2_VPK_PATH`.
+4. Standard Steam library probing by the bundled script.
+5. Fail with the checked candidates; do not silently substitute another archive.
 
 ## Search inputs
 
-Use these sources as lookup tokens:
-
-- KV: `AbilitySound`
-- Lua / Panorama code: `Game.EmitSound`, `EmitSound`, `EmitSoundOn`, `EmitSoundOnLocationWithCaster`, `StopSound`, `StopSoundOn`, `StopSoundEvent`, `PrecacheSoundScript`, `PrecacheResource("soundfile", ...)`
-- Local project soundevent sources: `content/<addon>/soundevents/*.vsndevts`
-- Soundevent files: `soundevents/*.vsndevts_c`
-- Resource files: `sounds/*.vsnd_c`
-- Source scan helper: `scripts/lookup_sound.py --source <path>`
+- KV: `AbilitySound`.
+- Lua/Panorama: `Game.EmitSound`, `EmitSound*`, `StopSound*`, `PrecacheSoundScript`, and `PrecacheResource("soundfile", ...)`.
+- Local sources: `content/<addon>/soundevents/*.vsndevts`.
+- Compiled events/resources: `soundevents/*.vsndevts_c`, `sounds/*.vsnd_c`.
+- Source helper: `scripts/lookup_sound.py --source <path>`.
 
 ## Search order
 
-1. Search the source token in vanilla KV or code.
-2. Search local project soundevent sources first when they exist.
-3. Search the matching `soundevents/*.vsndevts_c` file by name scope.
-4. Search the extracted strings inside that file for event names, aliases, and `sounds/...` references.
-5. If needed, search `sounds/*.vsnd_c` for the concrete resource file.
+1. Preserve the source API/KV field and token.
+2. Search local project source soundevents.
+3. Search hero/item-specific vanilla soundevents.
+4. Search shared gameplay soundevents.
+5. Search addon/UI scopes.
+6. Search global resources.
+7. Follow event dependencies and resource paths.
 
-Scope order:
+Treat compiled files as binary containers. Printable-string extraction can establish candidates but does not justify reconstructing unobserved event parameters.
 
-- Hero-specific files first: `soundevents/game_sounds_heroes/*.vsndevts_c`
-- Then shared gameplay files: `soundevents/game_sounds*.vsndevts_c`
-- Then addon/UI-specific files
-- Then global `sounds/*.vsnd_c`
+## Report
 
-## Interpreting compiled files
-
-`pak01_dir.vpk` mostly contains compiled `.vsndevts_c` and `.vsnd_c` files.
-
-- Treat compiled files as binary containers.
-- Use printable-string extraction to recover event names, resource hints, and metadata keys.
-- When available, prefer source `.vsndevts` text over compiled output.
-
-## Output format
-
-Report results in this order:
-
-1. Event or alias name
-2. Resource file path
-3. Loop/one-shot behavior
-4. Stop/fade relationship, if any
-5. Fallback or variant notes
-6. If the lookup started from code, the originating API and string argument
-
-If the mapping is ambiguous, say which file scope was inspected and which piece is still missing.
+1. Event or alias.
+2. Source soundevent file and evidence type.
+3. Underlying resource path.
+4. One-shot or loop behavior.
+5. Stop/fade/layer/limiter relationships.
+6. Originating API and string when lookup began from code.
+7. Remaining ambiguity.

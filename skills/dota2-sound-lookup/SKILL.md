@@ -1,78 +1,51 @@
 ---
 name: dota2-sound-lookup
-description: Inspect Dota 2 sound events and resource paths from vanilla KV, Lua, Panorama, local soundevent sources, or `pak01_dir.vpk`. Use when a task needs to identify, verify, or resolve `AbilitySound`, `EmitSound`, `EmitSoundOn`, `EmitSoundOnLocationWithCaster`, `StopSound*`, `PrecacheSoundScript`, `PrecacheResource("soundfile")`, `.vsndevts`, `.vsndevts_c`, or `.vsnd_c` entries before writing gameplay or UI code.
+description: Inspect Dota 2 sound events and resource paths from vanilla KV, Lua, Panorama, local soundevent sources, or pak01_dir.vpk. Use when identifying or verifying AbilitySound, EmitSound*, StopSound*, sound precache calls, .vsndevts, .vsndevts_c, or .vsnd_c entries before writing gameplay or UI code.
 ---
 
 # Dota 2 Sound Lookup
 
-## Overview
-
-Resolve a Dota 2 sound request into the exact sound event and underlying resource file. Do not guess from ability names or voice line names alone.
+Resolve the exact event and underlying resource. Never guess from an ability, hero, or voice-line name.
 
 ## Workflow
 
-1. Extract the source token from vanilla KV, Lua, or Panorama code.
-2. Normalize the token to an event name, sound alias, or resource hint.
-3. If the workspace contains `tools/soundevent_finder_gui`, use it first for VPK soundevent lookup. Do not guess event blocks from resource paths.
-4. If the project has local soundevent source files, scan them before adding or changing local events.
-5. If the code already contains a sound API call, scan it and resolve the concrete event or resource path.
-6. Search `pak01_dir.vpk` when the event is not resolved locally.
-7. Inspect the best-matching `soundevents/*.vsndevts` or `.vsndevts_c` block first.
-8. Follow any referenced `sounds/*.vsnd_c` resource files when available.
-9. Report the event name, resource path, source soundevent file, and any loop/fallback/stop relationship.
+1. Extract the token and originating API/KV field from source code.
+2. Search local source `.vsndevts` files before compiled or vanilla sources.
+3. When the workspace provides `tools/soundevent_finder_gui`, use it for VPK event-block lookup.
+4. Resolve `pak01_vpk` through the workspace path resolver when available. Otherwise pass `--vpk`, use `DOTA2_VPK_PATH`, or let `scripts/lookup_sound.py` probe standard Steam library layouts.
+5. Search the most specific soundevent scope first: hero, item, addon/UI, then global.
+6. Inspect the full matching event block and follow layer, limiter, block, loop, and stop dependencies.
+7. Resolve every referenced `sounds/*.vsnd` or compiled resource when available.
+8. Report event, resource, source file, originating API, loop/stop relationship, and unresolved ambiguity.
 
 ## Rules
 
-- Treat `AbilitySound`, `EmitSound*`, `StopSound*`, `PrecacheSoundScript`, `PrecacheResource("soundfile")`, and `soundevents` references as lookup inputs, not final answers.
-- Prefer the most specific file scope first: hero, item, addon, UI, then global.
-- If local source soundevent files are available, prefer them over compiled `.vsndevts_c` files.
-- If only compiled files are available, extract printable strings and search those strings for event names and resource hints.
-- When scanning code, keep the API call and the resolved string argument together in the report.
-- Do not claim a sound mapping is complete until the event file and the resource file have both been checked when both exist.
-- In the `E:\PVE` project, use `tools/soundevent_finder_gui` for concrete Dota 2 event lookup. Its default VPK path is resolved from `E:\PVE\tools\soundevent_finder_gui` to `E:\SteamLibrary\steamapps\common\dota 2 beta\game\dota\pak01_dir.vpk`. If that path does not exist, pass the real absolute VPK path explicitly.
-- When copying a vanilla event into a local `.vsndevts`, copy the full matched event block parameters (`volume`, `pitch`, `soundlevel`, `mixgroup`, `spread_radius`, `distance_max`, limiter/layer/block fields, `vsnd_files`, `vsnd_duration`), then apply documented project overrides.
-- In the `E:\PVE` project, reproduce the spatial-field normalization already used by the completed Shop1 soundevents:
-  - Apply the same threshold to both `spread_radius` and `distance_max`.
-  - For each field present in the source event, change its value to `4000` when the original value is strictly less than `2500`.
-  - Keep values of `2500` or greater unchanged unless the task explicitly requests different tuning.
-  - Evaluate the two fields separately when an event contains both.
-  - Use the field name `distance_max`, matching the existing `.vsndevts`; do not write `max_distance`.
-  - Evidence in commit `c0ce20ad2`: `spread_radius` values such as `300`, `600`, and `1500`, and `distance_max` values such as `1000`, `1500`, `2000`, and `2200`, were changed to `4000`.
+- Treat sound API strings and precache entries as lookup inputs, not proof of a complete mapping.
+- Prefer source `.vsndevts` over compiled `.vsndevts_c`.
+- If only compiled assets exist, extract printable strings and label the evidence accordingly.
+- Keep the API call and resolved string together in reports.
+- Do not claim completion until both the event block and resource mapping have been checked when both exist.
+- When copying an event, copy its complete verified parameter and dependency closure before applying project-local overrides.
+- Project-specific tuning belongs in project documentation, not this global skill.
+- Fail fast when the VPK or required event/resource cannot be resolved.
 
-## Tools
+## Commands
 
-Use `tools/soundevent_finder_gui` in `E:\PVE`:
+In a workspace with the standard resolver, resolve this Skill's directory as
+`$skillRoot` from the current `SKILL.md`:
 
 ```powershell
-@'
-from pathlib import Path
-import sys
-sys.path.insert(0, str(Path("tools/soundevent_finder_gui").resolve()))
-from soundevent_finder_gui import SoundEventFinder
-
-finder = SoundEventFinder(Path("tools/soundevent_finder_gui").resolve())
-vpk = finder.resolve_vpk_path("")
-finder.build_cache(vpk, force=False)
-
-for query in [
-    "sounds/weapons/hero/spectre/dagger_cast.vsnd",
-]:
-    print("====", query)
-    for match in finder.search(query):
-        print(match.relative_file)
-        print(match.event_name)
-        print(match.block_text)
-'@ | python -
+$paths = & tools/resolve_project_paths.ps1
+python (Join-Path $skillRoot "scripts/lookup_sound.py") --vpk-path $paths.pak01_vpk --query "<event-or-resource>"
 ```
 
-If `finder.resolve_vpk_path("")` points to a missing path, pass the known absolute VPK path:
+From this Skill directory without a project resolver:
 
-```python
-vpk = Path(r"E:\SteamLibrary\steamapps\common\dota 2 beta\game\dota\pak01_dir.vpk")
+```powershell
+python scripts/lookup_sound.py --vpk-path "<pak01_dir.vpk>" --query "<event-or-resource>"
+python scripts/lookup_sound.py --vpk-path "<pak01_dir.vpk>" --source "<lua-kv-or-panorama-source>"
 ```
 
-Use `scripts/lookup_sound.py` only when this project-specific tool is absent or unsuitable.
+Use `tools/soundevent_finder_gui` instead when it is present and suitable; pass the resolved VPK path explicitly rather than relying on tool-local machine defaults.
 
-## Reference
-
-See [sound-workflow.md](references/sound-workflow.md) for path resolution, search order, and output format.
+See `references/sound-workflow.md` for search order and reporting.

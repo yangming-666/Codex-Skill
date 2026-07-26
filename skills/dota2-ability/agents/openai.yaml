@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dota 2 Ability"
+  short_description: "Build abilities from current KV and native evidence"
+  default_prompt: "Use $dota2-ability to implement or replicate a Dota 2 ability using current project, KV, DLL resource, and runtime evidence."

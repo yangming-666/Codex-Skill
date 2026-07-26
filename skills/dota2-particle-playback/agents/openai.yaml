@@ -1,4 +1,4 @@
 interface:
   display_name: "Dota 2 Particle Playback"
-  short_description: "Inspect .vpcf before setting CPs"
-  default_prompt: "Use $dota2-particle-playback to inspect a Dota 2 particle .vpcf and choose the correct playback attach/CP setup."
+  short_description: "Resolve native resources and verify VPCF playback"
+  default_prompt: "Use $dota2-particle-playback to identify the correct Dota 2 particle and verify its attach, CP, movement, lifetime, and precache contract."

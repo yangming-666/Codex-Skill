@@ -23,14 +23,6 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Iterable
 
-import vpk
-
-
-DEFAULT_VPK_PATHS = [
-    Path(r"E:\SteamLibrary\steamapps\common\dota 2 beta\game\dota\pak01_dir.vpk"),
-    Path(r"C:\SteamLibrary\steamapps\common\dota 2 beta\game\dota\pak01_dir.vpk"),
-]
-
 PRINTABLE_RE = re.compile(rb"[ -~]{5,}")
 SOUND_FILE_RE = re.compile(r"^(soundevents|sounds)/.+\.(vsndevts_c|vsnd_c)$", re.IGNORECASE)
 RESOURCE_RE = re.compile(r"(sounds/[A-Za-z0-9_./\-]+\.vsnd(?:evts)?(?:_c)?)", re.IGNORECASE)
@@ -84,7 +76,17 @@ def resolve_vpk_path(explicit: str | None) -> Path:
     env_path = os.environ.get("DOTA2_VPK_PATH")
     if env_path:
         candidates.append(Path(env_path))
-    candidates.extend(DEFAULT_VPK_PATHS)
+    if os.name == "nt":
+        for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+            root = Path(f"{letter}:/")
+            if not root.exists():
+                continue
+            for relative in (
+                "Steam/steamapps/common/dota 2 beta/game/dota/pak01_dir.vpk",
+                "SteamLibrary/steamapps/common/dota 2 beta/game/dota/pak01_dir.vpk",
+                "Program Files (x86)/Steam/steamapps/common/dota 2 beta/game/dota/pak01_dir.vpk",
+            ):
+                candidates.append(root / relative)
     for path in candidates:
         if path and path.exists():
             return path
@@ -483,6 +485,14 @@ def main() -> int:
         help="Source file or directory to scan for sound APIs (Lua, JS, XML, KV, vsndevts)",
     )
     args = parser.parse_args()
+
+    try:
+        import vpk
+    except ModuleNotFoundError as exc:
+        raise SystemExit(
+            "Missing Python dependency 'vpk'. Install it in the selected Python environment "
+            "or use the workspace soundevent finder."
+        ) from exc
 
     vpk_path = resolve_vpk_path(args.vpk_path)
     archive = vpk.open(str(vpk_path))

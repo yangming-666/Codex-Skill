@@ -1,139 +1,80 @@
 # VPCF Inspection
 
-Use this reference when you need to determine how a Dota 2 particle should be played from its actual `.vpcf` file.
+Use this reference after the root particle has been selected.
 
-## Resolve the file
+## Resolve Current Files
 
-1. Start from the Dota 2 content root.
-2. Append `particles/...` to reach the particle path.
-3. Open the exact `.vpcf` file before deciding on CPs or attach mode.
-
-Portable resolution order:
+Resolve the content root in this order:
 
 1. `DOTA2_CONTENT_ROOT`
-2. A detected Steam install that ends at `dota 2 beta/content/dota`
-3. Ask the user for the install path if nothing is found
+2. `DOTA2_VANILLA_CONTENT_ROOT`
+3. Detected `Steam\steamapps\common\dota 2 beta\content\dota`
+4. Detected `SteamLibrary\steamapps\common\dota 2 beta\content\dota`
 
-Useful PowerShell patterns:
+Fail fast if the exact VPCF cannot be opened. For native abilities with an unknown path, use the `dota2-ability` server-DLL extractor before searching particle directories.
 
-```powershell
-if ($env:DOTA2_CONTENT_ROOT) { Join-Path $env:DOTA2_CONTENT_ROOT 'particles' }
-```
+## Parse the Contract
 
-```powershell
-$roots = @()
-Get-PSDrive -PSProvider FileSystem | ForEach-Object {
-  $roots += (Join-Path $_.Root 'Steam\steamapps\common\dota 2 beta\content\dota')
-  $roots += (Join-Path $_.Root 'SteamLibrary\steamapps\common\dota 2 beta\content\dota')
-}
-$roots | Where-Object { Test-Path $_ }
-```
+Read the root in this order:
 
-## Inspect the file
+1. `_class`, `m_nBehaviorVersion`, and `m_controlPointConfigurations`
+2. `m_Children` and enabled `m_ChildRef` branches
+3. CP fields such as `m_iControlPoint`, `m_nControlPoint`, `m_nCP`, `m_nCPInput`, `m_nFilterCP`, and `m_nOverrideCP`
+4. Movement operators and initializers
+5. Emitters, decay/stop operators, constant/random lifetime, and endcaps
+6. Renderers only when visual duplication, orientation, tint, or material behavior matters
 
-Look for these fields first:
+Follow a child when it:
 
-- `m_nBehaviorVersion`
-- `_class`
-- `m_controlPointConfigurations`
-- `m_Children` and `m_ChildRef`
-- `m_drivers`
-- `m_iAttachType`
-- `m_iControlPoint`
-- `m_nControlPoint`
-- `m_nCP1`, `m_nCP2`, and similar CP fields
-- `m_nFilterCP`
-- `m_nFirstMultipleOverride_BackwardCompat`
-- `C_OP_AttractToControlPoint`
-- `C_OP_MaxVelocity`
-- `C_OP_Orient2DRelToCP`
-- `C_OP_StopAfterCPDuration`
-- `C_OP_CPOffsetToPercentageBetweenCPs`
+- consumes a caller-facing CP;
+- owns or modifies movement/lifetime;
+- is the requested visual leaf or endcap;
+- conflicts with the root contract.
 
-Interpretation rules:
+Do not expand children that cannot affect caller inputs, movement, timing, or the requested visual.
 
-- `m_nBehaviorVersion` and `_class` help you tell which generation of VPCF syntax you are reading.
-- `m_iAttachType` tells you how the particle expects to bind at runtime.
-- `m_iControlPoint` means a specific control point gets its own driver or follow binding.
-- Control-point operators tell you which CPs must be set from Lua.
-- `m_nFilterCP` usually means one CP is used as a selector or mask, not just a position/value.
-- Child references mean the root file is a wrapper; inspect children too.
-- Preview data in the file is not always the runtime playback contract, so verify the actual drivers and operators.
-- A CP's semantic meaning comes from its consumers, not from the name of the particle or the Lua value you plan to pass in.
-- For packed CP vectors, analyze `x`, `y`, and `z` independently. A single CP index can carry unrelated meanings across different components.
-- If the same CP component is consumed in multiple files, document the common meaning only after checking all of them.
-- If a component is never consumed explicitly, mark it as unknown instead of inferring a meaning from a nearby effect.
-- For projectile particles, determine whether the engine, the particle file, or Lua owns movement before choosing playback API.
-- `m_nOverrideCP` on velocity operators often means "read speed/velocity from this CP"; do not treat that CP as a destination unless another consumer proves it.
-- A destination CP consumed by attraction/path operators should usually be set once for particle-driven projectiles. Updating it every frame can make the effect lag, split, or snap.
-- Lifetime operators such as `C_OP_StopAfterCPDuration` can make long-distance tests fail even when the target CP is correct. Scale visual speed from distance when the projectile must arrive before the cutoff.
+## Interpret CPs
 
-Parse order that works well on real files:
+- Name a CP from its consumer and caller evidence, never from its number.
+- Distinguish world/entity attachment from scalar/vector parameters.
+- Treat `x`, `y`, and `z` separately only for packed or conflicting vectors.
+- Mark a CP as internal when an operator generates it and only descendants consume it.
+- Use `direct` confidence for explicit caller/consumer agreement, `inferred` for consistent multi-file evidence, and `unknown` when no consumer proves the meaning.
 
-1. Read the header and class/version.
-2. Check `m_Children`.
-3. Check `m_controlPointConfigurations`.
-4. Search the file for CP fields.
-5. Check emitters/operators/initializers/renderers for timing or filter dependencies.
-6. Inspect each child file and merge the runtime contract.
-7. Build a per-component table:
-   - CP index
-   - vector component
-   - consumer file
-   - consumer field
-   - runtime meaning
-   - confidence
-8. Only after the table is complete, translate the result into runtime playback inputs.
+Build a CP table only for packed, conflicting, projectile, or undocumented contracts:
 
-Projectile-specific parse order:
+| CP/component | Consumer | Caller value | Meaning | Confidence |
+|---|---|---|---|---|
 
-1. Identify position/target consumers such as attract-to-CP, path, interpolation, or CP offset operators.
-2. Identify speed/velocity consumers such as max-velocity override, velocity random, movement basic, or parameter vectors.
-3. Identify orientation consumers such as `Orient2DRelToCP`.
-4. Identify lifetime cutoffs and emitter stop rules.
-5. Classify playback as engine-driven, particle-driven, or caller-driven.
-6. If classification is uncertain, validate with a small matrix before editing ability logic.
+## Classify Movement
 
-Practical refinements:
+- `engine-driven`: a projectile API owns position and standard projectile CPs.
+- `particle-driven`: VPCF velocity, attraction, path, or interpolation operators own movement.
+- `caller-driven`: Lua must update CPs over time.
 
-- If `m_Children` is present, treat the root as a wrapper until the active leaf or endcap tree is mapped.
-- If the particle family has siblings such as `*_launch`, `*_trail*`, `*_tracking`, and `*_explosion`, inspect them together and merge CP rules across the family before naming caller-facing inputs.
-- Keep caller-facing inputs separate from internal derived CPs:
-  - caller-facing inputs are the values the Lua caller should set immediately after `CreateParticle`
-  - internal derived CPs are only meaningful inside the child tree and should not be assumed mandatory for the caller
-- Record confidence per CP meaning:
-  - `direct` for explicit file bindings
-  - `inferred` for merged child-tree behavior
-  - `low-confidence` for single-branch hints
+Check `C_OP_AttractToControlPoint`, `C_OP_MaxVelocity`, velocity initializers, path/interpolation operators, and orientation operators. A velocity override CP is not a destination without a destination consumer.
 
-## Map to playback
+Check `C_OP_StopAfterCPDuration`, emitter duration, particle lifetime, `C_OP_Decay`, and endcap timing. If distance changes but the stop position does not, test lifetime/speed coupling before changing the destination.
 
-- Match the attach type to the particle definition instead of forcing `PATTACH_WORLDORIGIN`.
-- If the particle uses more than one CP, set all required CPs before assuming it is complete.
-- When a child particle is referenced, do not treat the parent file's preview CP layout as the final runtime contract until the child files are checked.
-- When a packed CP drives multiple visual layers, consider a small runtime perturbation test only after the file tree has been mapped; use it to confirm uncertain axis meanings, not to replace file inspection.
+## Map to Lua
 
-Projectile validation matrix:
+- Match the proven `PATTACH_*` mode.
+- Set every proven caller CP and leave internal derived CPs alone.
+- Set particle-driven destinations once.
+- Release finite one-shots after setup; explicitly destroy persistent/follow particles at the owning lifecycle boundary.
+- Use a minimal wrapper only for a proven root/child CP conflict.
 
-- Test at least three distances when the effect travels to a point.
-- If all distances stop at the same location, suspect fixed speed plus lifetime cutoff, not a wrong target.
-- Test with endcap disabled or visually separated so it cannot mask the projectile body.
-- For particle-driven projectiles, prefer a fixed visual duration and compute speed as `distance / duration` when the VPCF has a short cutoff.
-- Record whether each CP is set once at spawn, updated over time, or left to engine projectile APIs.
+## Focused Validation
 
-## Output checklist
+Test only unresolved hypotheses. For moving effects, short/long distance usually distinguishes destination errors from lifetime cutoffs. Disable or separate an endcap only if it hides the body movement.
 
-When reporting a result, include:
+## Output Checklist
 
-- The exact `.vpcf` path
-- Whether the file is a wrapper or a leaf
-- The attach mode used
-- The CP indices that matter
-- The movement owner: engine-driven, particle-driven, or caller-driven
-- Whether each caller CP is set once or updated over time
-- Any lifetime cutoff and the resulting speed/duration rule
-- The fields that drove the decision
-- Any child particle files that had to be inspected
-- Any missing information that prevents exact parity
-- A short caller-facing playback snippet when the particle has a stable runtime contract
-- A CP summary table when the particle tree is non-trivial
+- Root VPCF and relevant children
+- Native/custom resource-selection evidence
+- Attach mode
+- Caller CPs and internal CPs
+- Movement owner
+- Lifetime and cleanup
+- Precache owner
+- Remaining uncertainty
