@@ -1,10 +1,9 @@
 {
   "projectRoot": "D:\\analyse-game",
-  "generatedAtMs": 1783669181034,
+  "generatedAtMs": 1785244577462,
   "currentSuggestionIds": [
-    "3e348b1d-a799-4767-b649-e2fbfd0f0f42",
-    "fbe2d21e-78fd-4f8f-87bf-7c391a172fcb",
-    "a5a1ae86-96d4-4ed4-b359-094cb8869d78"
+    "1121bf80-5d68-43f1-8244-ce407cdb35a7",
+    "94be95d0-572e-4e22-961c-fa1d7ddca18c"
   ],
   "suggestions": [
     {
@@ -286,6 +285,26 @@
       "status": "pending",
       "createdAtMs": 1783650890820,
       "updatedAtMs": 1783650890820
+    },
+    {
+      "id": "1121bf80-5d68-43f1-8244-ce407cdb35a7",
+      "title": "将今日披风 Dota 证据包整理成可复用的 Panorama 组件目录",
+      "description": "刚加入的 27 个披风相关 Dota UI 源文件已有清单，但仍是原始参考素材。把它们按稀有度、物品详情、升级与弹窗状态拆成可检索的组件合同，可直接服务后续披风界面复刻。",
+      "prompt": "把 dota2_panorama_reference/2026-07-28_cloak_related 中今天提取的 Dota Panorama 参考，整理成一份可复用的组件级参考目录：逐个列出布局结构、关键 CSS 状态、中文本地化 token、适合复刻披风 UI 的部分，以及证据等级和不能据此断言的内容。输出到 reports，并附上从披风装备界面映射到这些组件的建议。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1785244577462,
+      "updatedAtMs": 1785244577462
+    },
+    {
+      "id": "94be95d0-572e-4e22-961c-fa1d7ddca18c",
+      "title": "用一次披风洗炼回包补齐词条池与六个缺失词条",
+      "description": "现有核对结果已确认静态表只有 36 个属性组，且明确缺少“城墙反弹伤害”等 6 项；`pool_id` 到候选词条的映射也仍是披风复刻的最大缺口。一次有结构的运行时回包采集就能同时推进两处。",
+      "prompt": "为国王披风洗炼设计并实现最小化运行时证据采集：定位可抓取的请求/响应或内存对象，记录每次洗炼的披风等级、pool_id、锁定数、展示词条名、entry、entry_attr、原始值和品质。随后把样本自动回填到 披风词条问题整理_核对结果.xlsx 与 reports/装备披风洗炼配置机制.xlsx，明确哪些 pool_id 候选集、单位和六个静态缺失词条已被证实。",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1785244577462,
+      "updatedAtMs": 1785244577462
     }
   ]
 }

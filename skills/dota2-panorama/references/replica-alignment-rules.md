@@ -4,13 +4,13 @@ Use this reference for strict draw.io-to-Panorama replication.
 
 ## 1) Geometry Contract
 
-Define contract with `extract_drawio_contract.py`, then maintain:
+Define the relation contract first, then use `extract_drawio_contract.py` to record measurements:
 
 - `x`, `y`, `width`, `height`
 - `selector`
 - optional `parent_selector`
 
-For child panels, validate position in parent-relative coordinates.
+For child panels, validate position in parent-relative coordinates, but implement centering and distribution through the parent layout rather than copied x/y offsets.
 
 ## 2) Relationship Constraints
 
@@ -24,8 +24,9 @@ In addition to raw geometry, define relation rules:
 
 ## 3) Outer/Inner Layout Split
 
-- Outer shell (design-critical): fixed px geometry only.
+- Outer shell (design-critical): fixed geometry when the design viewport requires it.
 - Inner content slots: controlled adaptive rules only.
+- Internal alignment: parent-owned center/edge/gap relations; no independent offset tuning.
 
 Examples:
 

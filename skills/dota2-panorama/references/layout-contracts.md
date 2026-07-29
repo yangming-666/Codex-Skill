@@ -23,7 +23,7 @@ Use a fixed shell with `flow-children: right`, then explicit left/center/right s
 
 ### Vertical
 
-Use an explicit-width/height container with `flow-children: down`. Use top/bottom spacer panels with `fill-parent-flow(1)` only for non-critical centering.
+Use an explicit-width/height container with `flow-children: down`. To center an action in a defined remaining region, give that region its own wrapper and center the action inside it. Use `fill-parent-flow(1)` only when the flexible remainder itself is part of the contract, not as an unexplained nudge.
 
 ### Hybrid
 
@@ -50,6 +50,16 @@ Separate box geometry from glyph layout:
 
 For centered text, give the wrapper stable height and the label full width, `height: fit-children`, `vertical-align: center`, and `text-align: center`. Use small offsets only as an approved optical correction.
 
+## Alignment contract
+
+- Put horizontal centering on the shared parent or the centered group.
+- Give icons and text stable wrappers and `vertical-align: center`; do not align them with unrelated `margin-top` values.
+- When a centered control has a side action, use equal side slots or overlay the side action outside flow so it cannot shift the center.
+- For arrows distributed around a centered value, use left/value/right slots with symmetric side widths.
+- For a left badge plus a right two-row progress area, use a horizontal parent; the right child owns a vertical copy row and progress bar.
+- Use explicit gaps or margins between semantic siblings. Do not rely on glyph whitespace.
+- Use pixels for sizes and authored gaps, not to counterfeit parent-child alignment.
+
 ## Scroll contract
 
 - The panel directly owning overflowing content owns `overflow: ... scroll`.
@@ -60,6 +70,14 @@ For centered text, give the wrapper stable height and the label full width, `hei
 - For finite custom carousels, let an outer panel clip and an inner strip own explicit translation.
 
 Diagnose native scroll by checking owner, overflow size, and parity with a working local source example before adding custom behavior.
+
+## Cascade and state contract
+
+- Search every definition of a critical selector before editing and identify the final applicable rule.
+- Keep one authoritative visual rule block per component. Consolidate temporary overrides before handoff.
+- Removing a visible frame requires checking the shell background, border, shadow, overlay layers, and source bitmap.
+- Local interaction changes update the smallest stable subtree. Rebuilding a whole row/card for a lock or counter change is a visual defect when it causes flashing or focus loss.
+- Put `hittest` and other panel properties in XML or JS, never VCSS.
 
 ## Syntax-sensitive structure
 

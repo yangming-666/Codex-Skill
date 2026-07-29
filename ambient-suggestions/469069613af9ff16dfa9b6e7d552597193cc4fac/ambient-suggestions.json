@@ -1,9 +1,8 @@
 {
   "projectRoot": "E:\\PVE",
-  "generatedAtMs": 1783060853985,
+  "generatedAtMs": 1785295773258,
   "currentSuggestionIds": [
-    "6bfaa567-36e9-4c60-b88d-58706cbc9791",
-    "ba5a555a-918d-48c9-af6f-5e9353ac4164"
+    "16e369b5-6fed-488f-b332-5f58fc186d8e"
   ],
   "suggestions": [
     {
@@ -155,6 +154,26 @@
       "status": "pending",
       "createdAtMs": 1783060853985,
       "updatedAtMs": 1783060853985
+    },
+    {
+      "id": "707e5822-b95d-463e-8e2c-5a555bbf2695",
+      "title": "Run the cloak unlock, lock, refine, and rename flow in local debug",
+      "description": "Today’s cloak layout and local/half-backend success-path changes are both in the working tree. Exercise the complete interaction flow now and fix any UI state that fails to refresh.",
+      "prompt": "Use the local/half-backend debug mode to run the complete cloak flow: unlock it, toggle attribute locks, refine, switch schemes, rename a scheme, and inspect the level preview. Fix any interaction, state-refresh, or layout issue you find in the Panorama source.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1785246211531,
+      "updatedAtMs": 1785246211531
+    },
+    {
+      "id": "16e369b5-6fed-488f-b332-5f58fc186d8e",
+      "title": "Finish cloak scheme rename persistence across local and backend modes",
+      "description": "The current cloak UI changes already add the rename modal, client event, and account action, so the remaining high-value pass is to close persistence/error-feedback gaps without desynchronizing the active scheme.",
+      "prompt": "Finish the cloak scheme rename flow end-to-end: inspect the current uncommitted implementation, complete any missing local-debug or backend response handling, and make the UI show a clear failure state without changing the selected scheme on failure.",
+      "appIds": [],
+      "status": "pending",
+      "createdAtMs": 1785295773258,
+      "updatedAtMs": 1785295773258
     }
   ]
 }

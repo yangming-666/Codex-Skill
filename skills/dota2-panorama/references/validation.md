@@ -44,3 +44,26 @@ python scripts/check_runtime_layout.py --contract <contract.json> --dump <runtim
 ```
 
 Require the selectors and visible selectors appropriate to the current screen. Finish with a screenshot comparison when strict visual fidelity is in scope.
+
+## Visual and interaction matrix
+
+Static geometry for the default state is insufficient. Before claiming completion, inspect every state selected in the applicable contract from `visual-delivery-loop.md`, including:
+
+- visibility, selection, enabled, and availability variants that apply;
+- meaningful minimum, maximum, empty, populated, loading, and error data;
+- navigation or pagination states whose content differs;
+- secondary surfaces through open, focus/input, submit, and cancel where applicable;
+- repeated interactions and asynchronous responses.
+
+Verify coupled text/data, exact assets, hit targets, focus, hover/active behavior, and stable shell geometry. A local toggle must not flash or rerender unrelated rows.
+
+## Console evidence
+
+- Inspect current Panorama/VConsole warnings when the user requests runtime verification or reports a runtime error.
+- Resolve warnings introduced by changed source, including missing resources, invalid VCSS properties, and failed localization.
+- Do not attribute a visual defect to compilation, caching, or stale output without a concrete load/compile error.
+- In auto-compiling Panorama projects, treat the displayed result as the current implementation until evidence proves otherwise.
+
+## Screenshot handoff
+
+When runtime structure is uncertain, use one early smoke screenshot. Then batch source-checked fixes and request one final screenshot set for the affected state matrix. Report source inspection and runtime verification separately.
